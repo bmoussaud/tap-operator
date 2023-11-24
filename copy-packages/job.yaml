@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tap-operator-copy-packages
+  namespace: tap-operator
+  labels:
+    app.kubernetes.io/name: bootstrap
+    app.kubernetes.io/part-of: tap-operator-copy-packages
+spec:
+  backoffLimit: 1
+  activeDeadlineSeconds: 1800
+  ttlSecondsAfterFinished: 120
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccount: tap-operator-copy-packages-sa
+      containers:
+        - name: bootstrap
+          image: tap-operator-copy-packages
+          securityContext:
+            runAsUser: 1000
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          env:
+            - name: PACKAGE
+              value: tanzu-cluster-essentials/cluster-essentials-bundle
+            - name: VERSION
+              value: 1.7.1
+          envFrom:
+            - secretRef:
+                name: tap-operator-copy-packages-credentials
+---
+apiVersion: kbld.k14s.io/v1alpha1
+kind: Config
+sources:
+  - image: tap-operator-copy-packages
+    path: copy-packages
+destinations:
+  - image: tap-operator-copy-packages
+    newImage: ghcr.io/bmoussaud/tap-operator

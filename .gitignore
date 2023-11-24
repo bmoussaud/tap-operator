@@ -1,0 +1,9 @@
+.DS_Store
+out
+_bootstrap.yaml
+*.zip
+.vscode
+config/bootstrap-secrets.yaml
+config/*-secrets.yaml
+out/copy_packages/*-secrets.yaml
+personal/
