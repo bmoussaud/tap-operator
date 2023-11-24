@@ -9,5 +9,8 @@ build-and-push-image:
 deploy: build-and-push-image 
 	kubectl apply -f out/copy_packages
 
+undeploy:
+	kubectl delete -f out/copy_packages
+
 clean:
 	rm -rf out
