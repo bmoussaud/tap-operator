@@ -4,7 +4,7 @@ metadata:
   name: tap-operator-copy-packages
   namespace: tap-operator
   labels:
-    app.kubernetes.io/name: bootstrap
+    app.kubernetes.io/name: tap-operator
     app.kubernetes.io/part-of: tap-operator-copy-packages
 spec:
   backoffLimit: 1
@@ -15,7 +15,7 @@ spec:
       restartPolicy: Never
       serviceAccount: tap-operator-copy-packages-sa
       containers:
-        - name: bootstrap
+        - name: tap-operator
           image: tap-operator-copy-packages
           securityContext:
             runAsUser: 1000
@@ -24,10 +24,14 @@ spec:
               cpu: "500m"
               memory: "256Mi"
           env:
-            - name: PACKAGE
+            - name: PACKAGE_1
               value: tanzu-cluster-essentials/cluster-essentials-bundle
-            - name: VERSION
+            - name: PACKAGE
+              value: tanzu-application-platform/tap-packages
+            - name: VERSION_1
               value: 1.7.1
+            - name: VERSION
+              value: 1.7.1-rc.7
           envFrom:
             - secretRef:
                 name: tap-operator-copy-packages-credentials
