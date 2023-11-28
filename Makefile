@@ -20,3 +20,13 @@ clean:
 redeploy: build-and-push-image 
 	kubectl delete jobs.batch tap-operator-copy-packages
 	kubectl apply -f out/copy_packages
+
+deploy-crd:
+	kubectl apply -f target/classes/META-INF/fabric8/tapresources.org.moussaud.tanzu-v1.yml
+
+deploy-spec: deploy-crd
+	kubectl apply -f src/test/resources/test-tap-operator.yaml
+
+test-operator: deploy-spec	
+	kubectl delete jobs.batch --all
+	./mvnw spring-boot:run

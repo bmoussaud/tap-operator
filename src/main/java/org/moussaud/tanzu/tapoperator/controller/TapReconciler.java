@@ -10,14 +10,13 @@ import io.javaoperatorsdk.operator.api.reconciler.ControllerConfiguration;
 import io.javaoperatorsdk.operator.api.reconciler.Reconciler;
 import io.javaoperatorsdk.operator.api.reconciler.UpdateControl;
 import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
-import io.javaoperatorsdk.operator.springboot.starter.sample.CustomServiceReconciler;
 
 @ControllerConfiguration(dependents = {
         @Dependent(name = "config", type = JobCopyPackageResource.class)
 })
 public class TapReconciler implements Reconciler<TapResource> {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomServiceReconciler.class);
+    private static final Logger log = LoggerFactory.getLogger(TapReconciler.class);
 
     private final KubernetesClient kubernetesClient;
 

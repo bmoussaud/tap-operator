@@ -1,54 +1,47 @@
 package org.moussaud.tanzu.tapoperator.controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.moussaud.tanzu.tapoperator.resource.TapResource;
+
 import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.ContainerBuilder;
-import io.fabric8.kubernetes.api.model.EnvVar;
-import io.fabric8.kubernetes.api.model.EnvVarBuilder;
-import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
-import io.fabric8.kubernetes.api.model.PodSpec;
-import io.fabric8.kubernetes.api.model.PodSpecBuilder;
-import io.fabric8.kubernetes.api.model.PodTemplateSpec;
-import io.fabric8.kubernetes.api.model.PodTemplateSpecBuilder;
-import io.fabric8.kubernetes.api.model.Secret;
-import io.fabric8.kubernetes.api.model.SecretEnvSourceBuilder;
-import io.fabric8.kubernetes.api.model.SecurityContext;
-import io.fabric8.kubernetes.api.model.SecurityContextBuilder;
-import io.fabric8.kubernetes.api.model.ContainerFluent.EnvFromNested;
 import io.fabric8.kubernetes.api.model.EnvFromSource;
 import io.fabric8.kubernetes.api.model.EnvFromSourceBuilder;
+import io.fabric8.kubernetes.api.model.EnvVar;
+import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
+import io.fabric8.kubernetes.api.model.PodSpecBuilder;
+import io.fabric8.kubernetes.api.model.PodTemplateSpecBuilder;
+import io.fabric8.kubernetes.api.model.SecurityContextBuilder;
 import io.fabric8.kubernetes.api.model.batch.v1.Job;
 import io.fabric8.kubernetes.api.model.batch.v1.JobBuilder;
-import io.fabric8.kubernetes.api.model.batch.v1.JobSpec;
 import io.fabric8.kubernetes.api.model.batch.v1.JobSpecBuilder;
-import io.fabric8.openshift.api.model.hive.v1.SecretReference;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.CRUDKubernetesDependentResource;
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDependent;
-import io.javaoperatorsdk.operator.springboot.starter.sample.CustomService;
 
 @KubernetesDependent(labelSelector = "app.kubernetes.io/managed-by=custom-service-operator")
-public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job, CustomService> {
+public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job, TapResource> {
 
     public JobCopyPackageResource() {
         super(Job.class);
     }
 
     @Override
-    protected Job desired(CustomService primary, Context<CustomService> context) {
+    protected Job desired(TapResource primary, Context<TapResource> context) {
         List<EnvVar> vars = Arrays.asList(
                 new EnvVar("PACKAGE", "tanzu-application-platform/tap-packages", null),
-                new EnvVar("VERSION", "1.7.1-rc.7", null));
+                new EnvVar("VERSION", primary.getSpec().getVersion(), null));
         EnvFromSource secret = new EnvFromSourceBuilder()
                 .withNewSecretRef("tap-operator-copy-packages-credentials", false)
                 .build();
 
+        String image = "ghcr.io/bmoussaud/tap-operator@sha256:81eab770659f04b90bfa655b1e5b514d63a470986ca37e7393a9808266fae6bc";
+
         Container container = new ContainerBuilder()
                 .withName("tap-operator")
-                .withImage("tap-operator-copy-packages")
+                .withImage(image)
                 .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
                 .withEnv(vars)
                 .withEnvFrom(secret)
@@ -73,7 +66,6 @@ public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job,
                         .build())
                 .build();
 
-        // return super.desired(primary, context);
     }
 
 }
