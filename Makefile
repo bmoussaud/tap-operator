@@ -29,4 +29,4 @@ deploy-spec: deploy-crd
 
 test-operator: deploy-spec	
 	kubectl delete jobs.batch --all
-	./mvnw spring-boot:run
+	./mvnw spring-boot:run 

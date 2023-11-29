@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.ContainerBuilder;
@@ -21,51 +23,60 @@ import io.javaoperatorsdk.operator.api.reconciler.Context;
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.CRUDKubernetesDependentResource;
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDependent;
 
-@KubernetesDependent(labelSelector = "app.kubernetes.io/managed-by=custom-service-operator")
+@KubernetesDependent(labelSelector = "app.kubernetes.io/managed-by=tap-operator")
 public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job, TapResource> {
 
-    public JobCopyPackageResource() {
-        super(Job.class);
-    }
+        private static final Logger log = LoggerFactory.getLogger(JobCopyPackageResource.class);
 
-    @Override
-    protected Job desired(TapResource primary, Context<TapResource> context) {
-        List<EnvVar> vars = Arrays.asList(
-                new EnvVar("PACKAGE", "tanzu-application-platform/tap-packages", null),
-                new EnvVar("VERSION", primary.getSpec().getVersion(), null));
-        EnvFromSource secret = new EnvFromSourceBuilder()
-                .withNewSecretRef("tap-operator-copy-packages-credentials", false)
-                .build();
+        public static String getJobName(String resourceName) {
+                return resourceName + "-copy-package";
+        }
 
-        String image = "ghcr.io/bmoussaud/tap-operator@sha256:81eab770659f04b90bfa655b1e5b514d63a470986ca37e7393a9808266fae6bc";
+        public JobCopyPackageResource() {
+                super(Job.class);
+        }
 
-        Container container = new ContainerBuilder()
-                .withName("tap-operator")
-                .withImage(image)
-                .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
-                .withEnv(vars)
-                .withEnvFrom(secret)
-                .build();
+        @Override
+        protected Job desired(TapResource primary, Context<TapResource> context) {
+                log.info("New desired copy package job " + primary.getFullResourceName());
+                String packagePath = "tanzu-application-platform/tap-packages";
+                packagePath = "tanzu-cluster-essentials/cluster-essentials-bundle";
+                List<EnvVar> vars = Arrays.asList(
+                                new EnvVar("PACKAGE", packagePath, null),
+                                new EnvVar("VERSION", primary.getSpec().getVersion(), null));
+                EnvFromSource secret = new EnvFromSourceBuilder()
+                                .withNewSecretRef("tap-operator-copy-packages-credentials", false)
+                                .build();
 
-        return new JobBuilder()
-                .withMetadata(new ObjectMetaBuilder()
-                        .withName(primary.getMetadata().getName() + "-job")
-                        .withNamespace(primary.getMetadata().getNamespace())
-                        .build())
-                .withSpec(new JobSpecBuilder()
-                        .withBackoffLimit(1)
-                        .withActiveDeadlineSeconds(1800L)
-                        .withTtlSecondsAfterFinished(120)
-                        .withTemplate(new PodTemplateSpecBuilder()
-                                .withSpec(new PodSpecBuilder()
-                                        .withRestartPolicy("Never")
-                                        .withServiceAccount("tap-operator-copy-packages-sa")
-                                        .withContainers(container)
-                                        .build())
-                                .build())
-                        .build())
-                .build();
+                String image = "ghcr.io/bmoussaud/tap-operator@sha256:81eab770659f04b90bfa655b1e5b514d63a470986ca37e7393a9808266fae6bc";
 
-    }
+                Container container = new ContainerBuilder()
+                                .withName("tap-operator")
+                                .withImage(image)
+                                .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
+                                .withEnv(vars)
+                                .withEnvFrom(secret)
+                                .build();
+                return new JobBuilder()
+                                .withMetadata(new ObjectMetaBuilder()
+                                                .withName(getJobName(primary.getMetadata().getName()))
+                                                .withNamespace(primary.getMetadata().getNamespace())
+                                                .build())
+                                .withSpec(new JobSpecBuilder()
+                                                .withBackoffLimit(1)
+                                                .withActiveDeadlineSeconds(1800L)
+                                                .withTtlSecondsAfterFinished(120)
+                                                .withTemplate(new PodTemplateSpecBuilder()
+                                                                .withSpec(new PodSpecBuilder()
+                                                                                .withRestartPolicy("Never")
+                                                                                .withServiceAccount(
+                                                                                                "tap-operator-copy-packages-sa")
+                                                                                .withContainers(container)
+                                                                                .build())
+                                                                .build())
+                                                .build())
+                                .build();
+
+        }
 
 }

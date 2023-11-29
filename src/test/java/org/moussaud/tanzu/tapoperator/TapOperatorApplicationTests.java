@@ -9,8 +9,6 @@ import io.javaoperatorsdk.operator.springboot.starter.test.EnableMockOperator;
 @EnableMockOperator(crdPaths = "classpath:tapresources.org.moussaud.tanzu-v1.yml")
 class TapOperatorApplicationTests {
 
-	
-
 	@Test
 	void contextLoads() {
 	}

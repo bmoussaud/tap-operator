@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: tap-operator
+  
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+    tags:
+      application: ${spring.application.name}
+      service: ${spring.application.name}
+      source: ${spring.application.name}-${random.uuid}
+  tracing:
+    # Set to true to forward tracing spans to a local Zipkin instance.
+    enabled: false
+    sampling:
+      probability: 0.1
+  otlp:
+    metrics:
+      export:
+        # Set to true to forward metrics to a local OpenTelemetry collector.
+        enabled: false
+        step: 30s
+logging:
+  pattern:
+    # Include tracing ids in log entries.
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+  level:
+    org.moussaud: DEBUG
+    org.springframework.web: ERROR
+    org.hibernate: ERROR
+    org.springframework.jdbc.core.JdbcTemplate: debug
+    org.springframework.jdbc.datasource.init.ScriptUtils: debug
+    org.springframework.jdbc.datasource: debug
+    com.example.springboot: info
+    org.springframework.cloud.bindings: debug
+    io.javaoperatorsdk.operator: debug
+    
