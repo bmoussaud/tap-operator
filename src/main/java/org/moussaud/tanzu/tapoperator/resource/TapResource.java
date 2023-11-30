@@ -14,7 +14,7 @@ import io.fabric8.kubernetes.model.annotation.Version;
 @ShortNames("tap")
 public class TapResource extends CustomResource<TapSpec, TapStatus> implements Namespaced {
 
-    public String toString() {
+    public String toSXxxxxtring() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
 

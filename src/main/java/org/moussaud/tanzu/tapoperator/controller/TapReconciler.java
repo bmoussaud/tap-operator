@@ -3,10 +3,10 @@ package org.moussaud.tanzu.tapoperator.controller;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import org.moussaud.tanzu.tapoperator.resource.TapReconcilerStatus;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.web.ServerProperties.Tomcat;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.fabric8.kubernetes.api.model.batch.v1.Job;
 import io.fabric8.kubernetes.api.model.batch.v1.JobStatus;
@@ -18,19 +18,14 @@ import io.javaoperatorsdk.operator.api.reconciler.DeleteControl;
 import io.javaoperatorsdk.operator.api.reconciler.Reconciler;
 import io.javaoperatorsdk.operator.api.reconciler.UpdateControl;
 import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
-import io.javaoperatorsdk.operator.processing.dependent.Updater;
-import io.fabric8.kubernetes.api.model.apps.DeploymentStatus;
+import net.bytebuddy.asm.MemberSubstitution.Substitution.Chain.Step.ForField.Read;
 
 //, readyPostcondition = JobCopyPackageReadyCondition.class
 @ControllerConfiguration(dependents = {
-        @Dependent(name = "copy-package-job", type = JobCopyPackageResource.class)
+        @Dependent(name = JobCopyPackageResource.NAME, type = JobCopyPackageResource.class)
 })
-public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResource>
-// , Updater<Job, TapResource>
-{
+public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResource> {
 
-    private static final String DONE = "DONE";
-    private static final String INPROGESS = "IN_PROGESS";
     private static final Logger log = LoggerFactory.getLogger(TapReconciler.class);
 
     private final KubernetesClient kubernetesClient;
@@ -42,27 +37,22 @@ public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResour
     @Override
     public UpdateControl<TapResource> reconcile(TapResource resource, Context<TapResource> context) throws Exception {
         log.info("Reconciling: {}/{}", resource.getMetadata().getName(), resource.getSpec().getVersion());
-
-        // UpdateControl<TapResource> noUpdate = UpdateControl.noUpdate();
-        // return noUpdate.rescheduleAfter(1, TimeUnit.SECONDS);
-
-        // .rescheduleAfter(1, TimeUnit.SECONDS);
-
         TapResource updated = updateTapResourceStatus(resource, context);
         log.info(
                 "Updating status of TapResource {} in namespace {} to {} status",
                 updated.getMetadata().getName(),
                 updated.getMetadata().getNamespace(),
                 updated.getStatus().getCopyPackageStatus());
-        if (updated.getStatus().getCopyPackageStatus().equalsIgnoreCase(INPROGESS)) {
+
+        if (updated.getStatus().isCopyPackageStatusInProgress()) {
             return UpdateControl.patchStatus(updated).rescheduleAfter(1, TimeUnit.SECONDS);
         } else {
-            return UpdateControl.patchStatus(updated);
+            return UpdateControl.updateStatus(updated);
         }
     }
 
     private TapResource updateTapResourceStatus(TapResource resource, Context<TapResource> context) {
-        log.info("Query {} running job in thr {} namespace", resource.getMetadata().getName(),
+        log.trace("Query the {} jobs in the {} namespace", resource.getMetadata().getName(),
                 resource.getMetadata().getNamespace());
         Job runningJob = context.getClient()
                 .batch()
@@ -70,17 +60,41 @@ public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResour
                 .jobs()
                 .inNamespace(resource.getMetadata().getNamespace())
                 .withName(JobCopyPackageResource.getJobName(resource.getMetadata().getName())).get();
-        // log.info("Running Job {}", runningJob);
+        if (runningJob == null) {
+            log.trace("Running {} job not found, job's gone", resource.getMetadata().getName());
+            resource.getStatus().setCopyPackageStatus(TapReconcilerStatus.DONE);
+            return resource;
+        }
+
+        log.trace("Running Job {}", runningJob);
         JobStatus status = Objects.requireNonNullElse(runningJob.getStatus(), new JobStatus());
-        log.info("status {}", status);
+        log.trace("Status {}", status);
         int succeeded = Objects.requireNonNullElse(status.getSucceeded(), 0);
-        // log.info("is succeeded {} ?", succeeded);
-        if (succeeded > 0) {
-            resource.getStatus().setCopyPackageStatus(DONE);
+        int failed = Objects.requireNonNullElse(status.getFailed(), 0);
+        log.trace("is job succeeded {} / failed {} ?", succeeded, failed);
+        if (failed > 0) {
+            resource.getStatus().setCopyPackageStatus(TapReconcilerStatus.FAILED);
+            deleteJob(resource, context);
         } else {
-            resource.getStatus().setCopyPackageStatus(INPROGESS);
+            if (succeeded > 0) {
+                resource.getStatus().setCopyPackageStatus(TapReconcilerStatus.DONE);
+                deleteJob(resource, context);
+            } else {
+                resource.getStatus().setCopyPackageStatus(TapReconcilerStatus.INPROGESS);
+            }
         }
         return resource;
+    }
+
+    private void deleteJob(TapResource resource, Context<TapResource> context) {
+        String jobName = JobCopyPackageResource.getJobName(resource.getMetadata().getName());
+        log.trace("Delete job: {}", jobName);
+        context.getClient()
+                .batch()
+                .v1()
+                .jobs()
+                .inNamespace(resource.getMetadata().getNamespace())
+                .withName(jobName).delete();
     }
 
     @Override

@@ -27,9 +27,10 @@ import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDep
 public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job, TapResource> {
 
         private static final Logger log = LoggerFactory.getLogger(JobCopyPackageResource.class);
+        public static final String NAME = "copy-package-job";
 
         public static String getJobName(String resourceName) {
-                return resourceName + "-copy-package";
+                return resourceName + NAME;
         }
 
         public JobCopyPackageResource() {
@@ -38,7 +39,7 @@ public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job,
 
         @Override
         protected Job desired(TapResource primary, Context<TapResource> context) {
-                log.info("New desired copy package job " + primary.getFullResourceName());
+                log.debug("Desired {} ", getJobName(primary.getMetadata().getName()));
                 String packagePath = "tanzu-application-platform/tap-packages";
                 packagePath = "tanzu-cluster-essentials/cluster-essentials-bundle";
                 List<EnvVar> vars = Arrays.asList(
@@ -65,7 +66,7 @@ public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job,
                                 .withSpec(new JobSpecBuilder()
                                                 .withBackoffLimit(1)
                                                 .withActiveDeadlineSeconds(1800L)
-                                                .withTtlSecondsAfterFinished(120)
+                                                .withTtlSecondsAfterFinished(100)
                                                 .withTemplate(new PodTemplateSpecBuilder()
                                                                 .withSpec(new PodSpecBuilder()
                                                                                 .withRestartPolicy("Never")
