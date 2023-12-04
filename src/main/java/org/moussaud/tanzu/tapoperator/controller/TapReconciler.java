@@ -45,7 +45,7 @@ public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResour
                 updated.getStatus().getCopyPackageStatus());
 
         if (updated.getStatus().isCopyPackageStatusInProgress()) {
-            return UpdateControl.patchStatus(updated).rescheduleAfter(1, TimeUnit.SECONDS);
+            return UpdateControl.updateStatus(updated).rescheduleAfter(2, TimeUnit.SECONDS);
         } else {
             return UpdateControl.updateStatus(updated);
         }

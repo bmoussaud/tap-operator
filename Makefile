@@ -34,3 +34,10 @@ test-operator: deploy-spec
 test-update-operator: 
 	kubectl apply -f src/test/resources/test-tap-operator-171.yaml
 	./mvnw spring-boot:run 
+
+clean_all: $(eval SHELL:=/bin/bash)
+	kubectl delete jobs.batch --all
+	#kfinalpatch tapresource.org.moussaud.tanzu "mytap"
+	kubectl delete -f src/test/resources/test-tap-operator.yaml
+	kubectl delete -f target/classes/META-INF/fabric8/tapresources.org.moussaud.tanzu-v1.yml
+
