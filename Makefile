@@ -1,5 +1,12 @@
+CARVEL_BINARIES := ytt kbld
 
-build-and-push-image: 
+all: build-and-push-image
+
+check-carvel:
+	$(foreach exec,$(CARVEL_BINARIES),\
+		$(if $(shell which $(exec)),,$(error "'$(exec)' not found. Carvel toolset is required. See instructions at https://carvel.dev/#install")))
+
+build-and-push-image:  check-carvel
 	mkdir -p out/copy_packages && \
 	kbld -f copy-packages/job.yaml > _copy_packages.yaml && \
 	ytt -f config -f _copy_packages.yaml > out/copy_packages/copy_packages-app.yaml && \
