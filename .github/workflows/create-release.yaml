@@ -1,31 +1,40 @@
 name: Create a release from a tag
 
+env:
+  IMAGE_NAME: ${{ github.repository }}
+
 on:
   push:
-    tags:
-    - 'v*'
+    #tags:
+    #  - "v*"
 
 jobs:
   create-release:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-    - uses: carvel-dev/setup-action@v1
-    - name: Log in to the container registry
-      uses: docker/login-action@v2.1.0
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Build and deploy image
-      run: make all
-    - name: Create release archive
-      uses: thedoctor0/zip-release@0.6.2
-      with:
-        directory: out
-        filename: ../tap-operator.zip
-    - uses: ncipollo/release-action@v1.11.1
-      with:
-        artifacts: tap-operator.zip
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: initialize carvel tools
+        uses: carvel-dev/setup-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: |
+          imgpkg version
+          kbld version
+      - name: Log in to the container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and deploy image
+        run: make all
+      - name: Create release archive
+        uses: thedoctor0/zip-release@0.6.2
+        with:
+          directory: out
+          filename: ../tap-operator.zip
+      - uses: ncipollo/release-action@v1.11.1
+        with:
+          artifacts: tap-operator.zip
