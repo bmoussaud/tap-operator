@@ -42,6 +42,9 @@ test-update-operator:
 	kubectl apply -f src/test/resources/test-tap-operator-171.yaml
 	./mvnw spring-boot:run 
 
+build_image:
+	./mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=bmoussaud/tap-operator
+
 clean_all: $(eval SHELL:=/bin/bash)
 	kubectl delete jobs.batch --all
 	#kfinalpatch tapresource.org.moussaud.tanzu "mytap"
