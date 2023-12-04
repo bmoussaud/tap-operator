@@ -2,5 +2,6 @@ apiVersion: org.moussaud.tanzu/v1
 kind: TapResource
 metadata:
   name: mytap
+  namespace: tap-operator
 spec:
   version: 1.7.0

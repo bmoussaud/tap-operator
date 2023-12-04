@@ -49,7 +49,7 @@ public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job,
                                 .withNewSecretRef("tap-operator-copy-packages-credentials", false)
                                 .build();
 
-                String image = "ghcr.io/bmoussaud/tap-operator@sha256:81eab770659f04b90bfa655b1e5b514d63a470986ca37e7393a9808266fae6bc";
+                String image = "ghcr.io/bmoussaud/tap-operator-copy-packages:v0.0.3";
 
                 Container container = new ContainerBuilder()
                                 .withName("tap-operator")
