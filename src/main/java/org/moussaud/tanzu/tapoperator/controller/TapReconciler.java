@@ -21,7 +21,8 @@ import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
 
 //, readyPostcondition = JobCopyPackageReadyCondition.class
 @ControllerConfiguration(dependents = {
-        @Dependent(name = JobCopyPackageResource.NAME, type = JobCopyPackageResource.class)
+        @Dependent(name = JobCopyPackageResource.NAME, type = JobCopyPackageResource.class),
+        @Dependent(name = SecretCopyPackageResource.NAME, type = SecretCopyPackageResource.class)
 })
 public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResource> {
 

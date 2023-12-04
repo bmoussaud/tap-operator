@@ -10,7 +10,7 @@ public class TapSpec {
     @PrinterColumn(name = "TAP_VERSION")
     private String version;
 
-    @Default("tap-operator-copy-packages-credentials")
+    @Default("tap-operator-registry-credentials")
     private String secret;
 
     public String getVersion() {

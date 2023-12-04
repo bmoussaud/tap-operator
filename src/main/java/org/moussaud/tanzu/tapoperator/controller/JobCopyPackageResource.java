@@ -40,18 +40,17 @@ public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job,
         @Override
         protected Job desired(TapResource primary, Context<TapResource> context) {
                 log.debug("Desired {} ", getJobName(primary.getMetadata().getName()));
-                String packagePath = "tanzu-application-platform/tap-packages";
-                String image = "ghcr.io/bmoussaud/tap-operator-copy-packages:v0.0.3";
                 
+                String packagePath = "tanzu-application-platform/tap-packages";
                 packagePath = "tanzu-cluster-essentials/cluster-essentials-bundle";
+                String image = "ghcr.io/bmoussaud/tap-operator-copy-packages:v0.0.3";
+
                 List<EnvVar> vars = Arrays.asList(
                                 new EnvVar("PACKAGE", packagePath, null),
                                 new EnvVar("VERSION", primary.getSpec().getVersion(), null));
                 EnvFromSource secret = new EnvFromSourceBuilder()
-                                .withNewSecretRef(primary.getSpec().getSecret(), false)
+                                .withNewSecretRef(SecretCopyPackageResource.NAME, false)
                                 .build();
-
-                
 
                 Container container = new ContainerBuilder()
                                 .withName("tap-operator")
