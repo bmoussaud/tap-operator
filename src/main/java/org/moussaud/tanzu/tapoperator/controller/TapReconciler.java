@@ -18,7 +18,6 @@ import io.javaoperatorsdk.operator.api.reconciler.DeleteControl;
 import io.javaoperatorsdk.operator.api.reconciler.Reconciler;
 import io.javaoperatorsdk.operator.api.reconciler.UpdateControl;
 import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
-import net.bytebuddy.asm.MemberSubstitution.Substitution.Chain.Step.ForField.Read;
 
 //, readyPostcondition = JobCopyPackageReadyCondition.class
 @ControllerConfiguration(dependents = {
