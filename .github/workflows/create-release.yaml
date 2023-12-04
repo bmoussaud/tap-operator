@@ -1,6 +1,6 @@
 name: tap-operator-copy-packages CI
 env:
-  IMAGE_NAME: tap-operator-copy-packages
+  IMAGE_NAME: ${{ github.repository }}-copy-packages
   REGISTRY: ghcr.io
 on:
   push:
