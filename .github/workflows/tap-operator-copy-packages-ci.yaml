@@ -1,6 +1,7 @@
-name: tap-operator-copy-packages CI
+name: tap-operator CI
 env:
-  IMAGE_NAME: ${{ github.repository }}-copy-packages
+  IMAGE_NAME_CP: ${{ github.repository }}-copy-packages
+  IMAGE_NAME_OPERATOR: ${{ github.repository }}
   REGISTRY: ghcr.io
 on:
   push:
@@ -8,7 +9,34 @@ on:
   #    - "v*"
 
 jobs:
-  create-release:
+  build-tap-operator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up JDK 11 for x64
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
+      - name: Run the Maven verify phase
+        run: mvn --batch-mode --update-snapshots verify
+      - name: Log in to the container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5.3.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_OPERATOR }}
+      - name: Run the Maven spring-boot:build-image
+        run: mvn spring-boot:build-image -Dspring-boot.build-image.imageName=${{ steps.meta.outputs.tags }}
+
+  build-copy-packages-image:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,7 +59,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5.3.0
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_CP }}
       - name: Build and push Docker image
         uses: docker/build-push-action@v5.1.0
         with:
