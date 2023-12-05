@@ -34,10 +34,13 @@ deploy-crd:
 deploy-config:
 	kubectl apply -f config
 
+deploy-local-config: gen_registry_secrets
+	kubectl apply -f config/namespace.yaml -f config/rbac.yaml -f out/copy_packages/registry-secrets.yaml
+
 deploy-spec: deploy-crd
 	kubectl apply -f src/test/resources/test-tap-operator.yaml
 
-test-operator: deploy-spec	
+test-operator: deploy-local-config deploy-spec	
 	kubectl delete jobs.batch --all
 	./mvnw spring-boot:run 
 
@@ -53,6 +56,7 @@ clean_all: $(eval SHELL:=/bin/bash)
 	#kfinalpatch tapresource.org.moussaud.tanzu "mytap"
 	kubectl delete -f src/test/resources/test-tap-operator.yaml
 	kubectl delete -f target/classes/META-INF/fabric8/tapresources.org.moussaud.tanzu-v1.yml
+	kubectl delete -f config 
 
 k8s_deploy_operator: deploy-crd deploy-config
 
