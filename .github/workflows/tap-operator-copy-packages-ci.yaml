@@ -35,6 +35,8 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_OPERATOR }}
       - name: Run the Maven spring-boot:build-image
         run: mvn spring-boot:build-image -Dspring-boot.build-image.imageName=${{ steps.meta.outputs.tags }}
+      - name: Push Image
+        run: docker push ${{ steps.meta.outputs.tags }}
 
   build-copy-packages-image:
     runs-on: ubuntu-latest
