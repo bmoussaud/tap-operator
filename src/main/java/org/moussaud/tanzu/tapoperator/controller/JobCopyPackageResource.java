@@ -12,6 +12,7 @@ import io.fabric8.kubernetes.api.model.ContainerBuilder;
 import io.fabric8.kubernetes.api.model.EnvFromSource;
 import io.fabric8.kubernetes.api.model.EnvFromSourceBuilder;
 import io.fabric8.kubernetes.api.model.EnvVar;
+import io.fabric8.kubernetes.api.model.EnvVarBuilder;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import io.fabric8.kubernetes.api.model.PodSpecBuilder;
 import io.fabric8.kubernetes.api.model.PodTemplateSpecBuilder;
@@ -40,24 +41,35 @@ public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job,
         @Override
         protected Job desired(TapResource primary, Context<TapResource> context) {
                 log.debug("Desired {} ", getJobName(primary.getMetadata().getName()));
-                
-                String packagePath = "tanzu-application-platform/tap-packages";
-                packagePath = "tanzu-cluster-essentials/cluster-essentials-bundle";
+
+                // String packagePath = "tanzu-application-platform/tap-packages";
+                // packagePath = "tanzu-cluster-essentials/cluster-essentials-bundle";
                 String image = "ghcr.io/bmoussaud/tap-operator-copy-packages:v0.0.3";
 
-                List<EnvVar> vars = Arrays.asList(
-                                new EnvVar("PACKAGE", packagePath, null),
-                                new EnvVar("VERSION", primary.getSpec().getVersion(), null));
-                EnvFromSource secret = new EnvFromSourceBuilder()
-                                .withNewSecretRef(SecretCopyPackageResource.NAME, false)
-                                .build();
-
-                Container container = new ContainerBuilder()
-                                .withName("tap-operator")
+                Container essentials = new ContainerBuilder()
+                                .withName("copy-cluster-essentials-bundle")
                                 .withImage(image)
                                 .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
-                                .withEnv(vars)
-                                .withEnvFrom(secret)
+                                .withEnv(Arrays.asList(
+                                                new EnvVar("PACKAGE",
+                                                                "tanzu-cluster-essentials/cluster-essentials-bundle",
+                                                                null),
+                                                new EnvVar("VERSION", primary.getSpec().getVersion(), null)))
+                                .withEnvFrom(new EnvFromSourceBuilder()
+                                                .withNewSecretRef(SecretCopyPackageResource.NAME, false)
+                                                .build())
+                                .build();
+
+                Container tap = new ContainerBuilder()
+                                .withName("copy-tap-packages")
+                                .withImage(image)
+                                .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
+                                .withEnv(Arrays.asList(
+                                                new EnvVar("PACKAGE", "tanzu-application-platform/tap-packages", null),
+                                                new EnvVar("VERSION", primary.getSpec().getVersion(), null)))
+                                .withEnvFrom(new EnvFromSourceBuilder()
+                                                .withNewSecretRef(SecretCopyPackageResource.NAME, false)
+                                                .build())
                                 .build();
                 return new JobBuilder()
                                 .withMetadata(new ObjectMetaBuilder()
@@ -73,7 +85,7 @@ public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job,
                                                                                 .withRestartPolicy("Never")
                                                                                 .withServiceAccount(
                                                                                                 "tap-operator")
-                                                                                .withContainers(container)
+                                                                                .withContainers(essentials, tap)
                                                                                 .build())
                                                                 .build())
                                                 .build())

@@ -27,12 +27,14 @@ public class SecretCopyPackageResource extends CRUDKubernetesDependentResource<S
 
     @Override
     protected Secret desired(TapResource primary, Context<TapResource> context) {
+        log.debug("Desired {} Secret", NAME);
+
         return new SecretBuilder()
                 .withMetadata(new ObjectMetaBuilder()
-                    .withName(NAME)
-                    .withNamespace(primary.getMetadata().getNamespace())
-                    .build())
-                
+                        .withName(NAME)
+                        .withNamespace(primary.getMetadata().getNamespace())
+                        .build())
+
                 .withData(buildDataFromSecret(primary, context))
                 .build();
     }
