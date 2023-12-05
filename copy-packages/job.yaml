@@ -13,7 +13,7 @@ spec:
   template:
     spec:
       restartPolicy: Never
-      serviceAccount: tap-operator-copy-packages-sa
+      serviceAccount: tap-operator
       containers:
         - name: tap-operator
           image: tap-operator-copy-packages

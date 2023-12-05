@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tap-operator
+  namespace: tap-operator
+spec:
+  selector:
+    matchLabels:
+      app: tap-operator
+  replicas: 1 
+  strategy:
+    type: Recreate 
+  template:
+    metadata:
+      labels:
+        app: tap-operator
+    spec:
+      serviceAccount: tap-operator
+      containers:
+      - name: operator
+        image: ghcr.io/bmoussaud/tap-operator:main
+        imagePullPolicy: Always

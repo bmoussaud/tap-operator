@@ -72,7 +72,7 @@ public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job,
                                                                 .withSpec(new PodSpecBuilder()
                                                                                 .withRestartPolicy("Never")
                                                                                 .withServiceAccount(
-                                                                                                "tap-operator-copy-packages-sa")
+                                                                                                "tap-operator")
                                                                                 .withContainers(container)
                                                                                 .build())
                                                                 .build())
