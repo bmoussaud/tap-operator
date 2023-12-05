@@ -59,7 +59,7 @@ public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResour
                 .v1()
                 .jobs()
                 .inNamespace(resource.getMetadata().getNamespace())
-                .withName(JobCopyPackageResource.getJobName(resource.getMetadata().getName())).get();
+                .withName(Utils.getJobName(resource)).get();
         if (runningJob == null) {
             log.trace("Running {} job not found, job's gone", resource.getMetadata().getName());
             resource.getStatus().setCopyPackageStatus(TapReconcilerStatus.DONE);
@@ -87,7 +87,7 @@ public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResour
     }
 
     private void deleteJob(TapResource resource, Context<TapResource> context) {
-        String jobName = JobCopyPackageResource.getJobName(resource.getMetadata().getName());
+        String jobName = Utils.getJobName(resource);
         log.trace("Delete job: {}", jobName);
         if (1 == 0) {
             context.getClient()

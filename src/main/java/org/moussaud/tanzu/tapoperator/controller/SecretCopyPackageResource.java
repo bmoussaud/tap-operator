@@ -19,7 +19,7 @@ import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDep
 @KubernetesDependent(labelSelector = "app.kubernetes.io/managed-by=tap-operator")
 public class SecretCopyPackageResource extends CRUDKubernetesDependentResource<Secret, TapResource> {
 
-    public static final String NAME = "copy-package-credentials";
+    public static final String NAME = "tap-operator-credentials";
     private static final Logger log = LoggerFactory.getLogger(SecretCopyPackageResource.class);
 
     public SecretCopyPackageResource() {
@@ -28,11 +28,11 @@ public class SecretCopyPackageResource extends CRUDKubernetesDependentResource<S
 
     @Override
     protected Secret desired(TapResource primary, Context<TapResource> context) {
-        log.debug("Desired {} Secret", NAME);
+        log.debug("Desired {} Secret", Utils.getSecretName(primary));
 
         return new SecretBuilder()
                 .withMetadata(new ObjectMetaBuilder()
-                        .withName(NAME)
+                        .withName(Utils.getSecretName(primary))
                         .withNamespace(primary.getMetadata().getNamespace())
                         .build())
 
@@ -47,38 +47,8 @@ public class SecretCopyPackageResource extends CRUDKubernetesDependentResource<S
             throw new RuntimeException(String.format("{} secret not found in the {} namespace ",
                     resource.getSpec().getSecret(), resource.getMetadata().getNamespace()));
         }
-        Map<String, String> data = secret.getData();
-        String install_bundle_value = decode(data.get("TO_REGISTRY_HOSTNAME"))
-                + "/tanzu-cluster-essentials/cluster-essentials-bundle:" + resource.getSpec().getVersion();
-        final Map<String, String> newData = Map.of(
-                "IMGPKG_REGISTRY_HOSTNAME_0", data.get("FROM_REGISTRY_HOSTNAME"),
-                "IMGPKG_REGISTRY_USERNAME_0", data.get("FROM_REGISTRY_USERNAME"),
-                "IMGPKG_REGISTRY_PASSWORD_0", data.get("FROM_REGISTRY_PASSWORD"),
-                "IMGPKG_REGISTRY_HOSTNAME_1", data.get("TO_REGISTRY_HOSTNAME"),
-                "IMGPKG_REGISTRY_USERNAME_1", data.get("TO_REGISTRY_USERNAME"),
-                "IMGPKG_REGISTRY_PASSWORD_1", data.get("TO_REGISTRY_PASSWORD"),
-                "INSTALL_BUNDLE", encode(install_bundle_value),
-                "INSTALL_REGISTRY_HOSTNAME", data.get("TO_REGISTRY_HOSTNAME"),
-                "INSTALL_REGISTRY_USERNAME", data.get("TO_REGISTRY_USERNAME"),
-                "INSTALL_REGISTRY_PASSWORD", data.get("TO_REGISTRY_PASSWORD"));
-        log.debug("secret data {}", newData);
-        return newData;
+
+        return Utils.computeEnvironmentVariables(resource, secret.getData());
     }
 
-    private String decode(String encoded) {
-        byte[] decoded = Base64.getDecoder().decode(encoded);
-        String decodedStr = new String(decoded, StandardCharsets.UTF_8);
-        return decodedStr;
-    }
-
-    private String encode(String s) {
-        try {
-            String x = Base64.getEncoder().encodeToString(s.getBytes("UTF-8"));
-            return x;
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return "X";
-        }
-    }
 }

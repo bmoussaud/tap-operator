@@ -30,23 +30,19 @@ public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job,
         private static final Logger log = LoggerFactory.getLogger(JobCopyPackageResource.class);
         public static final String NAME = "copy-package-job";
 
-        public static String getJobName(String resourceName) {
-                return resourceName + NAME;
-        }
-
         public JobCopyPackageResource() {
                 super(Job.class);
         }
 
         @Override
         protected Job desired(TapResource primary, Context<TapResource> context) {
-                log.debug("Desired {} ", getJobName(primary.getMetadata().getName()));
+                log.debug("Desired {} ", Utils.getJobName(primary));
 
                 // String packagePath = "tanzu-application-platform/tap-packages";
                 // packagePath = "tanzu-cluster-essentials/cluster-essentials-bundle";
                 String image = "ghcr.io/bmoussaud/tap-operator-copy-packages:v0.0.3";
 
-                Container copy_essentials = new ContainerBuilder()
+                final Container copy_essentials = new ContainerBuilder()
                                 .withName("copy-cluster-essentials-bundle")
                                 .withImage(image)
                                 .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
@@ -54,25 +50,26 @@ public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job,
                                                 new EnvVar("PACKAGE",
                                                                 "tanzu-cluster-essentials/cluster-essentials-bundle",
                                                                 null),
-                                                new EnvVar("VERSION", primary.getSpec().getVersion(), null)))
+                                                new EnvVar("VERSION", Utils.getClusterEssentialsBundleVersion(primary),
+                                                                null)))
                                 .withEnvFrom(new EnvFromSourceBuilder()
-                                                .withNewSecretRef(SecretCopyPackageResource.NAME, false)
+                                                .withNewSecretRef(Utils.getSecretName(primary), false)
                                                 .build())
                                 .build();
 
-                Container deploy_essential = new ContainerBuilder()
-                                .withName("deploy-essential")
+                final Container deploy_essential = new ContainerBuilder()
+                                .withName("deploy-tap-essential")
                                 .withImage("ghcr.io/alexandreroman/tanzu-cluster-essentials-bootstrap:kbld-rand-1699444742098385476-8669215173182")
                                 .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
                                 // .withEnv(Arrays.asList(
                                 // new EnvVar("INSTALL_BUNDLE", "tanzu-application-platform/tap-packages",
                                 // null)))
                                 .withEnvFrom(new EnvFromSourceBuilder()
-                                                .withNewSecretRef(SecretCopyPackageResource.NAME, false)
+                                                .withNewSecretRef(Utils.getSecretName(primary), false)
                                                 .build())
                                 .build();
 
-                Container copy_tap_packages = new ContainerBuilder()
+                final Container copy_tap_packages = new ContainerBuilder()
                                 .withName("copy-tap-packages")
                                 .withImage(image)
                                 .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
@@ -80,13 +77,13 @@ public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job,
                                                 new EnvVar("PACKAGE", "tanzu-application-platform/tap-packages", null),
                                                 new EnvVar("VERSION", primary.getSpec().getVersion(), null)))
                                 .withEnvFrom(new EnvFromSourceBuilder()
-                                                .withNewSecretRef(SecretCopyPackageResource.NAME, false)
+                                                .withNewSecretRef(Utils.getSecretName(primary), false)
                                                 .build())
                                 .build();
 
                 return new JobBuilder()
                                 .withMetadata(new ObjectMetaBuilder()
-                                                .withName(getJobName(primary.getMetadata().getName()))
+                                                .withName(Utils.getJobName(primary))
                                                 .withNamespace(primary.getMetadata().getNamespace())
                                                 .build())
                                 .withSpec(new JobSpecBuilder()
