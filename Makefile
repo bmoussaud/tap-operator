@@ -31,6 +31,9 @@ redeploy: build-and-push-image
 deploy-crd:
 	kubectl apply -f target/classes/META-INF/fabric8/tapresources.org.moussaud.tanzu-v1.yml
 
+deploy-config:
+	kubectl apply -f config
+
 deploy-spec: deploy-crd
 	kubectl apply -f src/test/resources/test-tap-operator.yaml
 
@@ -50,4 +53,7 @@ clean_all: $(eval SHELL:=/bin/bash)
 	#kfinalpatch tapresource.org.moussaud.tanzu "mytap"
 	kubectl delete -f src/test/resources/test-tap-operator.yaml
 	kubectl delete -f target/classes/META-INF/fabric8/tapresources.org.moussaud.tanzu-v1.yml
+
+k8s_deploy_operator: deploy-crd deploy-config
+
 
