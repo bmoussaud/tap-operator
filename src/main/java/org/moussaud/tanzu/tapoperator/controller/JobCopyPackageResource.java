@@ -46,7 +46,7 @@ public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job,
                 // packagePath = "tanzu-cluster-essentials/cluster-essentials-bundle";
                 String image = "ghcr.io/bmoussaud/tap-operator-copy-packages:v0.0.3";
 
-                Container essentials = new ContainerBuilder()
+                Container copy_essentials = new ContainerBuilder()
                                 .withName("copy-cluster-essentials-bundle")
                                 .withImage(image)
                                 .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
@@ -60,7 +60,19 @@ public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job,
                                                 .build())
                                 .build();
 
-                Container tap = new ContainerBuilder()
+                Container deploy_essential = new ContainerBuilder()
+                                .withName("deploy-essential")
+                                .withImage("ghcr.io/alexandreroman/tanzu-cluster-essentials-bootstrap:kbld-rand-1699444742098385476-8669215173182")
+                                .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
+                                // .withEnv(Arrays.asList(
+                                // new EnvVar("INSTALL_BUNDLE", "tanzu-application-platform/tap-packages",
+                                // null)))
+                                .withEnvFrom(new EnvFromSourceBuilder()
+                                                .withNewSecretRef(SecretCopyPackageResource.NAME, false)
+                                                .build())
+                                .build();
+
+                Container copy_tap_packages = new ContainerBuilder()
                                 .withName("copy-tap-packages")
                                 .withImage(image)
                                 .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
@@ -71,6 +83,7 @@ public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job,
                                                 .withNewSecretRef(SecretCopyPackageResource.NAME, false)
                                                 .build())
                                 .build();
+
                 return new JobBuilder()
                                 .withMetadata(new ObjectMetaBuilder()
                                                 .withName(getJobName(primary.getMetadata().getName()))
@@ -85,7 +98,8 @@ public class JobCopyPackageResource extends CRUDKubernetesDependentResource<Job,
                                                                                 .withRestartPolicy("Never")
                                                                                 .withServiceAccount(
                                                                                                 "tap-operator")
-                                                                                .withContainers(essentials, tap)
+                                                                                .withContainers(copy_essentials,
+                                                                                                deploy_essential)
                                                                                 .build())
                                                                 .build())
                                                 .build())

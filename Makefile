@@ -54,9 +54,8 @@ build_image:
 clean_all: $(eval SHELL:=/bin/bash)
 	kubectl delete jobs.batch --all
 	kubectl patch  tapresource.org.moussaud.tanzu "mytap" -p '{"metadata":{"finalizers":[]}}' --type=merge
-	kubectl delete -f src/test/resources/test-tap-operator.yaml
-	kubectl delete -f target/classes/META-INF/fabric8/tapresources.org.moussaud.tanzu-v1.yml
-	kubectl delete -f config 
+	kubectl delete -f src/test/resources/test-tap-operator.yaml -f target/classes/META-INF/fabric8/tapresources.org.moussaud.tanzu-v1.yml   -f config 
+
 
 k8s_deploy_operator: deploy-crd deploy-config
 
