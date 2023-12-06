@@ -4,8 +4,12 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
@@ -49,7 +53,44 @@ public class Utils {
     }
 
     public static String getClusterEssentialsBundleVersion(TapResource resource) {
-        return resource.getSpec().getVersion();
+        return _getClusterEssentialsBundleVersion(resource.getSpec().getVersion().trim());
+    }
+
+    static final Pattern REG_EXP_RC = Pattern.compile("^(\\d+\\.\\d+\\.\\d+)(?:-([a-zA-Z]+)\\.(\\d+))?$");
+
+    static final Pattern REG_EXP_MINOR = Pattern.compile("^(\\d+\\.\\d+)\\.(\\d+)(?:-([a-zA-Z]+)\\.(\\d+))?$");
+
+    public static String _getClusterEssentialsBundleVersion(String tapVersion) {
+        log.debug("input tapVersion {}", tapVersion);
+        if (availableBundleVersions.contains(tapVersion)) {
+            log.debug("tapVersion found in availableBundleVersions return {}", tapVersion);
+            return tapVersion;
+        }
+
+        final Matcher matcherRc = REG_EXP_RC.matcher(tapVersion);
+        if (matcherRc.matches()) {
+            String mainVersion = matcherRc.group(1);
+            if (matcherRc.group(2) != null) {
+                return _getClusterEssentialsBundleVersion(mainVersion);
+            }
+            final Matcher matcherMinor = REG_EXP_MINOR.matcher(tapVersion);
+            if (matcherMinor.matches()) {
+                String majorMinorVersion = matcherMinor.group(1);
+                Optional<String> foundVersion = availableBundleVersions
+                        .stream()
+                        .filter(v -> v.startsWith(majorMinorVersion))
+                        .sorted(Comparator.reverseOrder())
+                        .findFirst();
+                if (foundVersion.isPresent()) {
+                    log.debug("reduced tapVersion found return {}", foundVersion.get());
+                    return foundVersion.get();
+                }
+            }
+        }
+
+        String last = availableBundleVersions.get(availableBundleVersions.size() - 1);
+        log.debug("by default return the latest known version return {}", last);
+        return last;
     }
 
     private static String decode(String encoded) {
