@@ -39,7 +39,7 @@ public class Utils {
                 "INSTALL_REGISTRY_HOSTNAME", data.get("TO_REGISTRY_HOSTNAME"),
                 "INSTALL_REGISTRY_USERNAME", data.get("TO_REGISTRY_USERNAME"),
                 "INSTALL_REGISTRY_PASSWORD", data.get("TO_REGISTRY_PASSWORD"));
-        log.debug("secret data {}", newData);
+        log.trace("secret data {}", newData);
         return newData;
 
     }
@@ -109,4 +109,5 @@ public class Utils {
             return "X";
         }
     }
+
 }

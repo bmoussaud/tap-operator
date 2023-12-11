@@ -44,6 +44,9 @@ test-operator: deploy-local-config deploy-spec
 	kubectl delete jobs.batch --all
 	./mvnw spring-boot:run 
 
+run:
+	./mvnw spring-boot:run 
+
 test-update-operator: 
 	kubectl apply -f src/test/resources/test-tap-operator-171.yaml
 	./mvnw spring-boot:run 

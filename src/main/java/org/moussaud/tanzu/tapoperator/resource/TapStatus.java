@@ -6,6 +6,8 @@ import io.javaoperatorsdk.operator.api.ObservedGenerationAwareStatus;
 
 public class TapStatus extends ObservedGenerationAwareStatus {
 
+    private Boolean ready;
+
     private String copyPackageStatus;
 
     public String getCopyPackageStatus() {
@@ -22,7 +24,23 @@ public class TapStatus extends ObservedGenerationAwareStatus {
     }
 
     @JsonIgnore
-    public boolean  isCopyPackageStatusInProgress() {
+    public boolean isCopyPackageStatusInProgress() {
         return getCopyPackageStatus().equalsIgnoreCase(TapReconcilerStatus.INPROGESS.toString());
     }
+
+    public Boolean getReady() {
+        return ready;
+    }
+
+    public TapStatus setReady(Boolean ready) {
+        this.ready = ready;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "TapStatus [ready=" + ready + ", copyPackageStatus=" + copyPackageStatus + "]";
+    }
+
+    
 }
