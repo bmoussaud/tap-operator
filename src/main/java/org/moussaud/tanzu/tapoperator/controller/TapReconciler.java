@@ -26,7 +26,6 @@ public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResour
     @Override
     public UpdateControl<TapResource> reconcile(TapResource resource, Context<TapResource> context) throws Exception {
         log.info("Reconciling: {}/{}", resource.getMetadata().getName(), resource.getSpec().getVersion());
-
         var ready = context.managedDependentResourceContext().getWorkflowReconcileResult().orElseThrow()
                 .allDependentResourcesReady();
         resource.getStatus().setReady(ready);
@@ -34,8 +33,7 @@ public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResour
         if (resource.getStatus().getReady()) {
             log.info("Ready !");
             return UpdateControl.updateStatus(resource);
-        }
-        //log.debug("reschedule 10 ! ");
+        }        
         return UpdateControl.updateStatus(resource).rescheduleAfter(Duration.ofSeconds(10));
     }
 

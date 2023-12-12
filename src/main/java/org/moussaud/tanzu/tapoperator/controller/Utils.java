@@ -19,7 +19,7 @@ public class Utils {
 
     private static final Logger log = LoggerFactory.getLogger(Utils.class);
 
-    public static List<String> availableBundleVersions = Arrays.asList(
+    private static final List<String> availableBundleVersions = Arrays.asList(
             "1.0.0", "1.1.0", "1.1.0-rc.1", "1.1.0-rc.2", "1.2.0", "1.2.0-rc.1", "1.3.0", "1.3.1", "1.3.2", "1.3.3",
             "1.3.4", "1.3.5", "1.4.0", "1.4.1", "1.4.2", "1.4.3", "1.4.4", "1.4.5", "1.4.6", "1.4.7", "1.5.0", "1.5.1",
             "1.5.2", "1.5.3", "1.5.4", "1.5.5", "1.5.6", "1.5.7", "1.6.0", "1.6.1", "1.6.2", "1.6.3", "1.6.4", "1.7.0",
@@ -44,10 +44,6 @@ public class Utils {
 
     }
 
-    public static String getJobName(TapResource resource) {
-        return resource.getMetadata().getName() + "-copy-package-job";
-    }
-
     public static String getSecretName(TapResource resource) {
         return resource.getMetadata().getName() + "-tap-operator-credentials";
     }
@@ -56,9 +52,9 @@ public class Utils {
         return _getClusterEssentialsBundleVersion(resource.getSpec().getVersion().trim());
     }
 
-    static final Pattern REG_EXP_RC = Pattern.compile("^(\\d+\\.\\d+\\.\\d+)(?:-([a-zA-Z]+)\\.(\\d+))?$");
+    private static final Pattern REG_EXP_RC = Pattern.compile("^(\\d+\\.\\d+\\.\\d+)(?:-([a-zA-Z]+)\\.(\\d+))?$");
 
-    static final Pattern REG_EXP_MINOR = Pattern.compile("^(\\d+\\.\\d+)\\.(\\d+)(?:-([a-zA-Z]+)\\.(\\d+))?$");
+    private static final Pattern REG_EXP_MINOR = Pattern.compile("^(\\d+\\.\\d+)\\.(\\d+)(?:-([a-zA-Z]+)\\.(\\d+))?$");
 
     public static String _getClusterEssentialsBundleVersion(String tapVersion) {
         log.trace("input tapVersion {}", tapVersion);

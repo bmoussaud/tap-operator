@@ -1,7 +1,6 @@
 package org.moussaud.tanzu.tapoperator.controller;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
@@ -15,11 +14,7 @@ import io.fabric8.kubernetes.api.model.batch.v1.Job;
 import io.fabric8.kubernetes.api.model.batch.v1.JobBuilder;
 import io.fabric8.kubernetes.api.model.batch.v1.JobSpecBuilder;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
-import io.javaoperatorsdk.operator.processing.dependent.Creator;
-import io.javaoperatorsdk.operator.processing.dependent.Updater;
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.CRUDKubernetesDependentResource;
-import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDependentResource;
-import io.javaoperatorsdk.operator.processing.event.source.filter.OnUpdateFilter;
 
 public abstract class BaseResource extends CRUDKubernetesDependentResource<Job, TapResource>
                 implements TapOperatorManagedResource {
@@ -56,9 +51,7 @@ public abstract class BaseResource extends CRUDKubernetesDependentResource<Job, 
 
         @Override
         protected Job desired(TapResource primary, Context<TapResource> context) {
-                log.debug("Desired {} ", name(primary));
-                /// var actual = getSecondaryResource(primary, context);
-                // log.debug("-> actual Job {}", actual);
+                log.debug("Desired {} ", name(primary));  
                 return new JobBuilder()
                                 .withMetadata(createMeta(primary).build())
                                 .withSpec(new JobSpecBuilder()
