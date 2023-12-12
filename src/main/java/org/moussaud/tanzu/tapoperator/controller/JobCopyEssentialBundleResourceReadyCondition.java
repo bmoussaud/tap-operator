@@ -19,7 +19,7 @@ public class JobCopyEssentialBundleResourceReadyCondition implements Condition<J
         return dependentResource.getSecondaryResource(primary, context)
                 .map(job -> {
                     TapOperatorManagedResource tomr = (TapOperatorManagedResource) dependentResource;
-                    log.info("is Met {} with job {} ? ", primary.getMetadata().getName(), tomr.name(primary));
+                    log.trace("is Met {} with job {} ? ", primary.getMetadata().getName(), tomr.name(primary));
                     var runningJob = context.getClient().batch().v1().jobs()
                             .inNamespace(primary.getMetadata().getNamespace())
                             .withName(tomr.name(primary)).get();
@@ -28,7 +28,7 @@ public class JobCopyEssentialBundleResourceReadyCondition implements Condition<J
                                 primary.getMetadata().getName());
                         return false;
                     }
-                    log.info(">> isMet/runningJob Status {} ? " + runningJob.getStatus());
+                    log.info("isMet:{} runningJob: {} Status: {} ? ",primary.getMetadata().getName(), tomr.name(primary), runningJob.getStatus());
                     var succeeed = runningJob.getStatus().getSucceeded();
                     return succeeed != null && succeeed > 0;
                 })

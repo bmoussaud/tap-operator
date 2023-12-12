@@ -61,9 +61,9 @@ public class Utils {
     static final Pattern REG_EXP_MINOR = Pattern.compile("^(\\d+\\.\\d+)\\.(\\d+)(?:-([a-zA-Z]+)\\.(\\d+))?$");
 
     public static String _getClusterEssentialsBundleVersion(String tapVersion) {
-        log.debug("input tapVersion {}", tapVersion);
+        log.trace("input tapVersion {}", tapVersion);
         if (availableBundleVersions.contains(tapVersion)) {
-            log.debug("tapVersion found in availableBundleVersions return {}", tapVersion);
+            log.trace("tapVersion found in availableBundleVersions return {}", tapVersion);
             return tapVersion;
         }
 
@@ -82,14 +82,14 @@ public class Utils {
                         .sorted(Comparator.reverseOrder())
                         .findFirst();
                 if (foundVersion.isPresent()) {
-                    log.debug("reduced tapVersion found return {}", foundVersion.get());
+                    log.trace("reduced tapVersion found return {}", foundVersion.get());
                     return foundVersion.get();
                 }
             }
         }
 
         String last = availableBundleVersions.get(availableBundleVersions.size() - 1);
-        log.debug("by default return the latest known version return {}", last);
+        log.trace("by default return the latest known version return {}", last);
         return last;
     }
 

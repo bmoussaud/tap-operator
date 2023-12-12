@@ -1,6 +1,7 @@
 package org.moussaud.tanzu.tapoperator.controller;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
@@ -56,7 +57,7 @@ public abstract class BaseResource extends CRUDKubernetesDependentResource<Job, 
         @Override
         protected Job desired(TapResource primary, Context<TapResource> context) {
                 log.debug("Desired {} ", name(primary));
-                // var actual = getSecondaryResource(primary, context);
+                /// var actual = getSecondaryResource(primary, context);
                 // log.debug("-> actual Job {}", actual);
                 return new JobBuilder()
                                 .withMetadata(createMeta(primary).build())
@@ -77,28 +78,18 @@ public abstract class BaseResource extends CRUDKubernetesDependentResource<Job, 
 
         }
 
-        public static class UpdateFiter implements OnUpdateFilter<Job> {
-
-                public UpdateFiter() {
-                }
-
-                @Override
-                public boolean accept(Job newResource, Job oldResource) {
-                        log.error("UPDATE !!!! ");
-                        return true;
-                }
-
-        }
-
         @Override
         public Job create(Job desired, TapResource primary, Context<TapResource> context) {
+                log.debug("Create Job....");
                 deleteCurrentJob(desired, context);
                 log.debug("proceed create with actual {}/{}", desired.getMetadata().getNamespace(),
                                 desired.getMetadata().getName());
                 return super.create(desired, primary, context);
         }
 
+        @Override
         public Job update(Job actual, Job desired, TapResource primary, Context<TapResource> context) {
+                log.debug("Update Job....");
                 deleteCurrentJob(actual, context);
                 log.debug("proceed update with actual {}/{}", actual.getMetadata().getNamespace(),
                                 actual.getMetadata().getName());
