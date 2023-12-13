@@ -14,13 +14,11 @@ import io.javaoperatorsdk.operator.api.reconciler.Reconciler;
 import io.javaoperatorsdk.operator.api.reconciler.UpdateControl;
 import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
 
-//, readyPostcondition = JobCopyPackageReadyCondition.class
-//  @Dependent(name = SecretCopyPackageResource.NAME, type = SecretCopyPackageResource.class)
 @ControllerConfiguration(dependents = {
         @Dependent(name = SecretCopyPackageResource.COMPONENT, type = SecretCopyPackageResource.class),
-        //@Dependent(name = JobCopyEssentialBundleResource.COMPONENT, dependsOn = SecretCopyPackageResource.COMPONENT, type = JobCopyEssentialBundleResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
-        //@Dependent(name = JobDeployEssentialBundleResource.COMPONENT, dependsOn = JobCopyEssentialBundleResource.COMPONENT, type = JobDeployEssentialBundleResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
-        //@Dependent(name = JobCopyTapResource.COMPONENT, dependsOn = SecretCopyPackageResource.COMPONENT, type = JobCopyTapResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
+        @Dependent(name = JobCopyEssentialBundleResource.COMPONENT, dependsOn = SecretCopyPackageResource.COMPONENT, type = JobCopyEssentialBundleResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
+        @Dependent(name = JobDeployEssentialBundleResource.COMPONENT, dependsOn = JobCopyEssentialBundleResource.COMPONENT, type = JobDeployEssentialBundleResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
+        @Dependent(name = JobCopyTapResource.COMPONENT, dependsOn = SecretCopyPackageResource.COMPONENT, type = JobCopyTapResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
 })
 public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResource> {
 
