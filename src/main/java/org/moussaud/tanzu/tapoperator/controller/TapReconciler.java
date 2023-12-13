@@ -15,11 +15,11 @@ import io.javaoperatorsdk.operator.api.reconciler.UpdateControl;
 import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
 
 @ControllerConfiguration(dependents = {
-        @Dependent(name = SecretCopyPackageResource.COMPONENT, type = SecretCopyPackageResource.class),
-        @Dependent(name = JobCopyEssentialBundleResource.COMPONENT, dependsOn = SecretCopyPackageResource.COMPONENT, type = JobCopyEssentialBundleResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
-        @Dependent(name = JobDeployEssentialBundleResource.COMPONENT, dependsOn = JobCopyEssentialBundleResource.COMPONENT, type = JobDeployEssentialBundleResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
-        @Dependent(name = JobCopyTapResource.COMPONENT, dependsOn = SecretCopyPackageResource.COMPONENT, type = JobCopyTapResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
-        @Dependent(name = JobPostgresCopyResource.COMPONENT, dependsOn = SecretCopyPackageResource.COMPONENT, type = JobPostgresCopyResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
+        @Dependent(name = SecretResource.COMPONENT, type = SecretResource.class),
+        @Dependent(name = JobEssentialBundleCopyResource.COMPONENT, dependsOn = SecretResource.COMPONENT, type = JobEssentialBundleCopyResource.class, readyPostcondition = JobReadyCondition.class),
+        @Dependent(name = JobEssentialBundleDeployResource.COMPONENT, dependsOn = JobEssentialBundleCopyResource.COMPONENT, type = JobEssentialBundleDeployResource.class, readyPostcondition = JobReadyCondition.class),
+        @Dependent(name = JobTapCopyResource.COMPONENT, dependsOn = SecretResource.COMPONENT, type = JobTapCopyResource.class, readyPostcondition = JobReadyCondition.class),
+        @Dependent(name = JobPostgresCopyResource.COMPONENT, dependsOn = SecretResource.COMPONENT, type = JobPostgresCopyResource.class, readyPostcondition = JobReadyCondition.class),
 })
 public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResource> {
 

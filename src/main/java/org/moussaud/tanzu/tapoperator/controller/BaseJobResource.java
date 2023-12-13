@@ -14,16 +14,16 @@ import io.fabric8.kubernetes.api.model.batch.v1.JobBuilder;
 import io.fabric8.kubernetes.api.model.batch.v1.JobSpecBuilder;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
 
-public abstract class JobResource extends BaseResource<Job> {
+public abstract class BaseJobResource extends BaseResource<Job> {
 
-        private static final Logger log = LoggerFactory.getLogger(JobResource.class);
+        private static final Logger log = LoggerFactory.getLogger(BaseJobResource.class);
 
-        public JobResource(Class<Job> resourceType, String component) {
+        public BaseJobResource(Class<Job> resourceType, String component) {
                 super(resourceType, component);
         }
 
         protected String getSecretName(TapResource primary) {
-                return new SecretCopyPackageResource().name(primary);
+                return new SecretResource().name(primary);
         }
 
         protected abstract List<Container> getContainer(TapResource primary);

@@ -16,13 +16,13 @@ import io.javaoperatorsdk.operator.api.reconciler.ResourceIDMatcherDiscriminator
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDependent;
 import io.javaoperatorsdk.operator.processing.event.ResourceID;
 
-@KubernetesDependent(labelSelector = JobCopyTapResource.SELECTOR, resourceDiscriminator = JobCopyTapResource.Discriminator.class)
-public class JobCopyTapResource extends JobResource {
+@KubernetesDependent(labelSelector = JobTapCopyResource.SELECTOR, resourceDiscriminator = JobTapCopyResource.Discriminator.class)
+public class JobTapCopyResource extends BaseJobResource {
 
         public static final String COMPONENT = "tap-copy";
         public static final String SELECTOR = K8S_MANAGED_BY + "=" + K8S_OWNER + "," + K8S_COMPONENT + "=" + COMPONENT;
 
-        public JobCopyTapResource() {
+        public JobTapCopyResource() {
                 super(Job.class, COMPONENT);
         }
 

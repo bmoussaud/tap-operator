@@ -16,13 +16,13 @@ import io.javaoperatorsdk.operator.api.reconciler.ResourceIDMatcherDiscriminator
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDependent;
 import io.javaoperatorsdk.operator.processing.event.ResourceID;
 
-@KubernetesDependent(labelSelector = JobCopyEssentialBundleResource.SELECTOR, resourceDiscriminator = JobCopyEssentialBundleResource.Discriminator.class)
-public class JobCopyEssentialBundleResource extends JobResource {
+@KubernetesDependent(labelSelector = JobEssentialBundleCopyResource.SELECTOR, resourceDiscriminator = JobEssentialBundleCopyResource.Discriminator.class)
+public class JobEssentialBundleCopyResource extends BaseJobResource {
 
         public static final String COMPONENT = "essential-bundle-copy";
         public static final String SELECTOR = K8S_MANAGED_BY + "=" + K8S_OWNER + "," + K8S_COMPONENT + "=" + COMPONENT;
 
-        public JobCopyEssentialBundleResource() {
+        public JobEssentialBundleCopyResource() {
                 super(Job.class, COMPONENT);
         }
 

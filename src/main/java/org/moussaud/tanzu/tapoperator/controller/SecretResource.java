@@ -12,16 +12,16 @@ import io.javaoperatorsdk.operator.api.reconciler.Context;
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDependent;
 
 
-@KubernetesDependent(labelSelector = SecretCopyPackageResource.SELECTOR)
-public class SecretCopyPackageResource extends BaseResource<Secret>
+@KubernetesDependent(labelSelector = SecretResource.SELECTOR)
+public class SecretResource extends BaseResource<Secret>
 {
     public static final String COMPONENT = "tap-operator-credentials";
     public static final String SELECTOR = BaseResource.K8S_MANAGED_BY + "=" + BaseResource.K8S_OWNER + ","
             + BaseResource.K8S_COMPONENT + "=" + COMPONENT;
 
-    private static final Logger log = LoggerFactory.getLogger(SecretCopyPackageResource.class);
+    private static final Logger log = LoggerFactory.getLogger(SecretResource.class);
 
-    public SecretCopyPackageResource() {
+    public SecretResource() {
         super(Secret.class, COMPONENT);
     }
 

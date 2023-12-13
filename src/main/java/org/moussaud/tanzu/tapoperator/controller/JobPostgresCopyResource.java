@@ -17,7 +17,7 @@ import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDep
 import io.javaoperatorsdk.operator.processing.event.ResourceID;
 
 @KubernetesDependent(labelSelector = JobPostgresCopyResource.SELECTOR, resourceDiscriminator = JobPostgresCopyResource.Discriminator.class)
-public class JobPostgresCopyResource extends JobResource {
+public class JobPostgresCopyResource extends BaseJobResource {
 
         public static final String COMPONENT = "postgres-copy";
         public static final String SELECTOR = K8S_MANAGED_BY + "=" + K8S_OWNER + "," + K8S_COMPONENT + "=" + COMPONENT;

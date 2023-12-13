@@ -9,9 +9,9 @@ import io.javaoperatorsdk.operator.api.reconciler.Context;
 import io.javaoperatorsdk.operator.api.reconciler.dependent.DependentResource;
 import io.javaoperatorsdk.operator.processing.dependent.workflow.Condition;
 
-public class JobCopyEssentialBundleResourceReadyCondition implements Condition<Job, TapResource> {
+public class JobReadyCondition implements Condition<Job, TapResource> {
 
-    private static final Logger log = LoggerFactory.getLogger(JobCopyEssentialBundleResourceReadyCondition.class);
+    private static final Logger log = LoggerFactory.getLogger(JobReadyCondition.class);
 
     @Override
     public boolean isMet(DependentResource<Job, TapResource> dependentResource, TapResource primary,
