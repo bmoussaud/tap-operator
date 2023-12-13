@@ -8,3 +8,6 @@ config/*-secrets.yaml
 out/copy_packages/*-secrets.yaml
 personal/
 target/
+out.json
+tanzu-gitops-ri-0.3.3.tgz
+item.json
