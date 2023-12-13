@@ -44,6 +44,10 @@ public class Utils {
 
     }
 
+    public static String getPostgresVersion(TapResource resource) {
+        return "1.12.1";
+    }
+
     public static String getClusterEssentialsBundleVersion(TapResource resource) {
         return _getClusterEssentialsBundleVersion(resource.getSpec().getVersion().trim());
     }

@@ -19,6 +19,7 @@ import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
         @Dependent(name = JobCopyEssentialBundleResource.COMPONENT, dependsOn = SecretCopyPackageResource.COMPONENT, type = JobCopyEssentialBundleResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
         @Dependent(name = JobDeployEssentialBundleResource.COMPONENT, dependsOn = JobCopyEssentialBundleResource.COMPONENT, type = JobDeployEssentialBundleResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
         @Dependent(name = JobCopyTapResource.COMPONENT, dependsOn = SecretCopyPackageResource.COMPONENT, type = JobCopyTapResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
+        @Dependent(name = JobPostgresCopyResource.COMPONENT, dependsOn = SecretCopyPackageResource.COMPONENT, type = JobPostgresCopyResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
 })
 public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResource> {
 
