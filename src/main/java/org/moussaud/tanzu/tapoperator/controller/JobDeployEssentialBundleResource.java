@@ -17,9 +17,9 @@ import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDep
 import io.javaoperatorsdk.operator.processing.event.ResourceID;
 
 @KubernetesDependent(labelSelector = JobDeployEssentialBundleResource.SELECTOR, resourceDiscriminator = JobDeployEssentialBundleResource.Discriminator.class)
-public class JobDeployEssentialBundleResource extends BaseResource {
+public class JobDeployEssentialBundleResource extends JobResource {
 
-        public static final String COMPONENT = "deploy-essential-bundle";
+        public static final String COMPONENT = "essential-bundle-deploy";
         public static final String SELECTOR = K8S_MANAGED_BY + "=" + K8S_OWNER + "," + K8S_COMPONENT + "=" + COMPONENT;
 
         public JobDeployEssentialBundleResource() {
@@ -40,7 +40,7 @@ public class JobDeployEssentialBundleResource extends BaseResource {
                                                 new EnvVar("VERSION", Utils.getClusterEssentialsBundleVersion(primary),
                                                                 null)))
                                 .withEnvFrom(new EnvFromSourceBuilder()
-                                                .withNewSecretRef(Utils.getSecretName(primary), false)
+                                                .withNewSecretRef(getSecretName(primary), false)
                                                 .build())
                                 .build());
         }

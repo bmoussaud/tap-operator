@@ -1,9 +1,11 @@
 package org.moussaud.tanzu.tapoperator.controller;
 
 import java.time.Duration;
+
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import io.javaoperatorsdk.operator.api.reconciler.Cleaner;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
 import io.javaoperatorsdk.operator.api.reconciler.ControllerConfiguration;
@@ -15,9 +17,10 @@ import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
 //, readyPostcondition = JobCopyPackageReadyCondition.class
 //  @Dependent(name = SecretCopyPackageResource.NAME, type = SecretCopyPackageResource.class)
 @ControllerConfiguration(dependents = {
-        @Dependent(name = JobCopyEssentialBundleResource.COMPONENT, type = JobCopyEssentialBundleResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
-        @Dependent(name = JobDeployEssentialBundleResource.COMPONENT, type = JobDeployEssentialBundleResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class, dependsOn = JobCopyEssentialBundleResource.COMPONENT),
-        @Dependent(name = JobCopyTapResource.COMPONENT, type = JobCopyTapResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
+        @Dependent(name = SecretCopyPackageResource.COMPONENT, type = SecretCopyPackageResource.class),
+        //@Dependent(name = JobCopyEssentialBundleResource.COMPONENT, dependsOn = SecretCopyPackageResource.COMPONENT, type = JobCopyEssentialBundleResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
+        //@Dependent(name = JobDeployEssentialBundleResource.COMPONENT, dependsOn = JobCopyEssentialBundleResource.COMPONENT, type = JobDeployEssentialBundleResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
+        //@Dependent(name = JobCopyTapResource.COMPONENT, dependsOn = SecretCopyPackageResource.COMPONENT, type = JobCopyTapResource.class, readyPostcondition = JobCopyEssentialBundleResourceReadyCondition.class),
 })
 public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResource> {
 
@@ -33,7 +36,7 @@ public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResour
         if (resource.getStatus().getReady()) {
             log.info("Ready !");
             return UpdateControl.updateStatus(resource);
-        }        
+        }
         return UpdateControl.updateStatus(resource).rescheduleAfter(Duration.ofSeconds(10));
     }
 

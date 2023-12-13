@@ -44,10 +44,6 @@ public class Utils {
 
     }
 
-    public static String getSecretName(TapResource resource) {
-        return resource.getMetadata().getName() + "-tap-operator-credentials";
-    }
-
     public static String getClusterEssentialsBundleVersion(TapResource resource) {
         return _getClusterEssentialsBundleVersion(resource.getSpec().getVersion().trim());
     }

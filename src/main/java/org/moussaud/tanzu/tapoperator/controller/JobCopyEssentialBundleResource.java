@@ -17,9 +17,9 @@ import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDep
 import io.javaoperatorsdk.operator.processing.event.ResourceID;
 
 @KubernetesDependent(labelSelector = JobCopyEssentialBundleResource.SELECTOR, resourceDiscriminator = JobCopyEssentialBundleResource.Discriminator.class)
-public class JobCopyEssentialBundleResource extends BaseResource {
+public class JobCopyEssentialBundleResource extends JobResource {
 
-        public static final String COMPONENT = "copy-essential-bundle";
+        public static final String COMPONENT = "essential-bundle-copy";
         public static final String SELECTOR = K8S_MANAGED_BY + "=" + K8S_OWNER + "," + K8S_COMPONENT + "=" + COMPONENT;
 
         public JobCopyEssentialBundleResource() {
@@ -40,7 +40,7 @@ public class JobCopyEssentialBundleResource extends BaseResource {
                                                 new EnvVar("VERSION", Utils.getClusterEssentialsBundleVersion(primary),
                                                                 null)))
                                 .withEnvFrom(new EnvFromSourceBuilder()
-                                                .withNewSecretRef(Utils.getSecretName(primary), false)
+                                                .withNewSecretRef(getSecretName(primary), false)
                                                 .build())
                                 .build();
                 return Collections.singletonList(copy_essentials);

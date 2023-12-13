@@ -17,9 +17,9 @@ import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDep
 import io.javaoperatorsdk.operator.processing.event.ResourceID;
 
 @KubernetesDependent(labelSelector = JobCopyTapResource.SELECTOR, resourceDiscriminator = JobCopyTapResource.Discriminator.class)
-public class JobCopyTapResource extends BaseResource {
+public class JobCopyTapResource extends JobResource {
 
-        public static final String COMPONENT = "copy-tap";
+        public static final String COMPONENT = "tap-copy";
         public static final String SELECTOR = K8S_MANAGED_BY + "=" + K8S_OWNER + "," + K8S_COMPONENT + "=" + COMPONENT;
 
         public JobCopyTapResource() {
@@ -40,11 +40,13 @@ public class JobCopyTapResource extends BaseResource {
                                                 new EnvVar("VERSION", primary.getSpec().getVersion(),
                                                                 null)))
                                 .withEnvFrom(new EnvFromSourceBuilder()
-                                                .withNewSecretRef(Utils.getSecretName(primary), false)
+                                                .withNewSecretRef(getSecretName(primary), false)
                                                 .build())
                                 .build();
                 return Collections.singletonList(copy_essentials);
         }
+
+       
 
         public static class Discriminator
                         extends ResourceIDMatcherDiscriminator<Job, TapResource> {

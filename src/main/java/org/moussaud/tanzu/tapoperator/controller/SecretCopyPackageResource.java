@@ -6,53 +6,48 @@ import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretBuilder;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
-
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDependent;
-import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDependentResource;
-import io.javaoperatorsdk.operator.processing.dependent.Creator;
-import io.javaoperatorsdk.operator.processing.dependent.Updater;
 
-@KubernetesDependent(labelSelector = "app.kubernetes.io/managed-by=tap-operator")
-public class SecretCopyPackageResource
-        extends KubernetesDependentResource<Secret, TapResource>
-        implements Creator<Secret, TapResource>, Updater<Secret, TapResource> {
 
-    public static final String NAME = "tap-operator-credentials";
+@KubernetesDependent(labelSelector = SecretCopyPackageResource.SELECTOR)
+public class SecretCopyPackageResource extends BaseResource<Secret>
+{
+    public static final String COMPONENT = "tap-operator-credentials";
+    public static final String SELECTOR = BaseResource.K8S_MANAGED_BY + "=" + BaseResource.K8S_OWNER + ","
+            + BaseResource.K8S_COMPONENT + "=" + COMPONENT;
+
     private static final Logger log = LoggerFactory.getLogger(SecretCopyPackageResource.class);
 
     public SecretCopyPackageResource() {
-        super(Secret.class);
+        super(Secret.class, COMPONENT);
+    }
+
+    public String name(TapResource primary) {
+        return "%s-%s".formatted(primary.getMetadata().getName(), COMPONENT);
     }
 
     @Override
     protected Secret desired(TapResource primary, Context<TapResource> context) {
-        log.debug("Desired {} Secret", Utils.getSecretName(primary));
-        var actual = getSecondaryResource(primary, context);
-        log.debug("-> actual Secret {}", actual);
-
+        log.debug("Desired {} {}", name(primary), resourceType());
         return new SecretBuilder()
-                .withMetadata(new ObjectMetaBuilder()
-                        .withName(Utils.getSecretName(primary))
-                        .withNamespace(primary.getMetadata().getNamespace())
-                        .build())
-
+                .withMetadata(createMeta(primary).build())
                 .withData(buildDataFromSecret(primary, context))
                 .build();
     }
 
-    Map<String, String> buildDataFromSecret(TapResource resource, Context<TapResource> context) {
-        Secret secret = context.getClient().secrets().inNamespace(resource.getMetadata().getNamespace())
-                .withName(resource.getSpec().getSecret()).get();
+    private Map<String, String> buildDataFromSecret(TapResource resource, Context<TapResource> context) {
+        //TODO Fix this : why the CRD does not return the default value.
+        var secretName = (resource.getSpec().getSecret() == null ? "tap-operator-registry-credentials"
+                : resource.getSpec().getSecret());
+        var secret = context.getClient().secrets().inNamespace(resource.getMetadata().getNamespace())
+                .withName(secretName).get();
         if (secret == null) {
             throw new RuntimeException(String.format("{} secret not found in the {} namespace ",
-                    resource.getSpec().getSecret(), resource.getMetadata().getNamespace()));
+                    secretName, resource.getMetadata().getNamespace()));
         }
-
         return Utils.computeEnvironmentVariables(resource, secret.getData());
     }
-
 }
