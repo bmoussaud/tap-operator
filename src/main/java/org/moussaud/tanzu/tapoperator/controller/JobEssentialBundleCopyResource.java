@@ -12,16 +12,11 @@ import io.fabric8.kubernetes.api.model.EnvFromSourceBuilder;
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.api.model.SecurityContextBuilder;
 import io.fabric8.kubernetes.api.model.batch.v1.Job;
-import io.javaoperatorsdk.operator.api.reconciler.ResourceIDMatcherDiscriminator;
-import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDependent;
-import io.javaoperatorsdk.operator.processing.event.ResourceID;
 
-@KubernetesDependent(labelSelector = JobEssentialBundleCopyResource.SELECTOR, resourceDiscriminator = JobEssentialBundleCopyResource.Discriminator.class)
 public class JobEssentialBundleCopyResource extends BaseJobResource {
 
         public static final String COMPONENT = "essential-bundle-copy";
-        public static final String SELECTOR = K8S_MANAGED_BY + "=" + K8S_OWNER + "," + K8S_COMPONENT + "=" + COMPONENT;
-
+        
         public JobEssentialBundleCopyResource() {
                 super(Job.class, COMPONENT);
         }
@@ -46,11 +41,4 @@ public class JobEssentialBundleCopyResource extends BaseJobResource {
                 return Collections.singletonList(copy_essentials);
         }
 
-        public static class Discriminator
-                        extends ResourceIDMatcherDiscriminator<Job, TapResource> {
-                public Discriminator() {
-                        super(p -> new ResourceID(p.getMetadata().getName() + "-" + COMPONENT,
-                                        p.getMetadata().getNamespace()));
-                }
-        }
 }

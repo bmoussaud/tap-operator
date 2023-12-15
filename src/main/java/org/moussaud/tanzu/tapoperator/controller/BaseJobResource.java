@@ -13,6 +13,8 @@ import io.fabric8.kubernetes.api.model.batch.v1.Job;
 import io.fabric8.kubernetes.api.model.batch.v1.JobBuilder;
 import io.fabric8.kubernetes.api.model.batch.v1.JobSpecBuilder;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
+import io.javaoperatorsdk.operator.api.reconciler.ResourceIDMatcherDiscriminator;
+import io.javaoperatorsdk.operator.processing.event.ResourceID;
 
 public abstract class BaseJobResource extends BaseResource<Job> {
 
@@ -20,6 +22,7 @@ public abstract class BaseJobResource extends BaseResource<Job> {
 
         public BaseJobResource(Class<Job> resourceType, String component) {
                 super(resourceType, component);
+                setResourceDiscriminator(new Discriminator(component));
         }
 
         protected String getSecretName(TapResource primary) {
@@ -27,6 +30,14 @@ public abstract class BaseJobResource extends BaseResource<Job> {
         }
 
         protected abstract List<Container> getContainer(TapResource primary);
+
+        class Discriminator
+                        extends ResourceIDMatcherDiscriminator<Job, TapResource> {
+                public Discriminator(String component) {
+                        super(p -> new ResourceID(p.getMetadata().getName() + "-" + component,
+                                        p.getMetadata().getNamespace()));
+                }
+        }
 
         @Override
         protected Job desired(TapResource primary, Context<TapResource> context) {

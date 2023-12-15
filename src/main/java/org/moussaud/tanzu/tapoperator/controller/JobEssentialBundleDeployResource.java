@@ -12,16 +12,12 @@ import io.fabric8.kubernetes.api.model.EnvFromSourceBuilder;
 import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.api.model.SecurityContextBuilder;
 import io.fabric8.kubernetes.api.model.batch.v1.Job;
-import io.javaoperatorsdk.operator.api.reconciler.ResourceIDMatcherDiscriminator;
-import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDependent;
-import io.javaoperatorsdk.operator.processing.event.ResourceID;
 
-@KubernetesDependent(labelSelector = JobEssentialBundleDeployResource.SELECTOR, resourceDiscriminator = JobEssentialBundleDeployResource.Discriminator.class)
+
 public class JobEssentialBundleDeployResource extends BaseJobResource {
 
         public static final String COMPONENT = "essential-bundle-deploy";
-        public static final String SELECTOR = K8S_MANAGED_BY + "=" + K8S_OWNER + "," + K8S_COMPONENT + "=" + COMPONENT;
-
+        
         public JobEssentialBundleDeployResource() {
                 super(Job.class, COMPONENT);
         }
@@ -45,11 +41,5 @@ public class JobEssentialBundleDeployResource extends BaseJobResource {
                                 .build());
         }
 
-        public static class Discriminator
-                        extends ResourceIDMatcherDiscriminator<Job, TapResource> {
-                public Discriminator() {
-                        super(p -> new ResourceID(p.getMetadata().getName() + "-" + COMPONENT,
-                                        p.getMetadata().getNamespace()));
-                }
-        }
+       
 }
