@@ -8,26 +8,6 @@ public class TapStatus extends ObservedGenerationAwareStatus {
 
     private Boolean ready;
 
-    private String copyPackageStatus;
-
-    public String getCopyPackageStatus() {
-        return copyPackageStatus;
-    }
-
-    public void setCopyPackageStatus(String copyPackageStatus) {
-        this.copyPackageStatus = copyPackageStatus;
-    }
-
-    @JsonIgnore
-    public void setCopyPackageStatus(TapReconcilerStatus copyPackageStatus) {
-        this.copyPackageStatus = copyPackageStatus.toString();
-    }
-
-    @JsonIgnore
-    public boolean isCopyPackageStatusInProgress() {
-        return getCopyPackageStatus().equalsIgnoreCase(TapReconcilerStatus.INPROGESS.toString());
-    }
-
     public Boolean getReady() {
         return ready;
     }
@@ -39,8 +19,7 @@ public class TapStatus extends ObservedGenerationAwareStatus {
 
     @Override
     public String toString() {
-        return "TapStatus [ready=" + ready + ", copyPackageStatus=" + copyPackageStatus + "]";
+        return "TapStatus [ready=" + ready + "]";
     }
 
-    
 }

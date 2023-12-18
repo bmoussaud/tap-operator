@@ -20,8 +20,7 @@ import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
         @Dependent(name = JobEssentialBundleDeployResource.COMPONENT, dependsOn = JobEssentialBundleCopyResource.COMPONENT, type = JobEssentialBundleDeployResource.class, readyPostcondition = JobReadyCondition.class),
         @Dependent(name = JobTapCopyResource.COMPONENT, dependsOn = SecretResource.COMPONENT, type = JobTapCopyResource.class, readyPostcondition = JobReadyCondition.class),
         @Dependent(name = JobPostgresCopyResource.COMPONENT, dependsOn = SecretResource.COMPONENT, type = JobPostgresCopyResource.class, readyPostcondition = JobReadyCondition.class),
-        // @Dependent(name = NamespaceResource.COMPONENT, type =
-        // NamespaceResource.class)
+        @Dependent(name = NamespaceResource.COMPONENT, type = NamespaceResource.class)
 })
 public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResource> {
 
@@ -38,6 +37,7 @@ public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResour
             log.info("Ready !");
             return UpdateControl.updateStatus(resource);
         }
+
         return UpdateControl.updateStatus(resource).rescheduleAfter(Duration.ofSeconds(10));
     }
 
@@ -46,5 +46,4 @@ public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResour
         log.info("Clean up: {}", resource.getMetadata().getName());
         return DeleteControl.defaultDelete();
     }
-
 }
