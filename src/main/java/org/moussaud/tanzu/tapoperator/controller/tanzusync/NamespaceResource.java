@@ -1,4 +1,4 @@
-package org.moussaud.tanzu.tapoperator.controller;
+package org.moussaud.tanzu.tapoperator.controller.tanzusync;
 
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 
@@ -7,9 +7,7 @@ import io.fabric8.kubernetes.api.model.NamespaceBuilder;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
 import io.javaoperatorsdk.operator.api.reconciler.dependent.Deleter;
-import io.javaoperatorsdk.operator.api.reconciler.dependent.GarbageCollected;
 import io.javaoperatorsdk.operator.processing.dependent.Creator;
-import io.javaoperatorsdk.operator.processing.dependent.kubernetes.CRUDKubernetesDependentResource;
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDependentResource;
 
 public class NamespaceResource extends KubernetesDependentResource<Namespace, TapResource>
@@ -24,10 +22,9 @@ public class NamespaceResource extends KubernetesDependentResource<Namespace, Ta
     protected Namespace desired(TapResource primary, Context<TapResource> context) {
         return new NamespaceBuilder()
                 .withMetadata(new ObjectMetaBuilder()
-                        .withName(COMPONENT).build())
+                        .withName(COMPONENT)                       
+                        .build())
                 .build();
     }
-
-    
 
 }
