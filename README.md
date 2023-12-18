@@ -6,6 +6,7 @@ Tanzu Application Platformm (TAP) operator manages the following task:
     * copy TAP packages from tanzu registry to a local registry 
     * copy PostgresSQL from tanzu registry to a local registry 
 * Deploy _TAP Essential_ in the cluster (kapp-control, secret-gen-control) (thanks @alexandreroman [tanzu-cluster-essentials-bootstrap](https://github.com/alexandreroman/tanzu-cluster-essentials-bootstrap) )
+* [Later] Deploy tap-sync to trigger the TAP Gitop installation 
 
 ## Installation
 
