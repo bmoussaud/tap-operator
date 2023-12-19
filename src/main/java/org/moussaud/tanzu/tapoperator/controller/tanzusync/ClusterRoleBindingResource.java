@@ -10,7 +10,7 @@ import io.fabric8.kubernetes.api.model.rbac.*;
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDependentResource;
 
 public class ClusterRoleBindingResource extends KubernetesDependentResource<ClusterRoleBinding, TapResource>
-                implements Creator<ClusterRoleBinding, TapResource>, Deleter<TapResource> {
+        implements Creator<ClusterRoleBinding, TapResource>, Deleter<TapResource> {
         public static final String COMPONENT = "tanzu-sync-cluster-crb-admin";
 
         public ClusterRoleBindingResource() {

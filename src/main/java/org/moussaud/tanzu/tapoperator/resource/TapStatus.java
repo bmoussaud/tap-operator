@@ -1,7 +1,5 @@
 package org.moussaud.tanzu.tapoperator.resource;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import io.javaoperatorsdk.operator.api.ObservedGenerationAwareStatus;
 
 public class TapStatus extends ObservedGenerationAwareStatus {

@@ -5,6 +5,7 @@ import java.time.Duration;
 import org.moussaud.tanzu.tapoperator.controller.tanzusync.ClusterRoleBindingResource;
 import org.moussaud.tanzu.tapoperator.controller.tanzusync.ClusterRoleResource;
 import org.moussaud.tanzu.tapoperator.controller.tanzusync.NamespaceResource;
+import org.moussaud.tanzu.tapoperator.controller.tanzusync.SecretExportResource;
 import org.moussaud.tanzu.tapoperator.controller.tanzusync.ServiceAccountResource;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
@@ -37,7 +38,8 @@ import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
         @Dependent(name = NamespaceResource.COMPONENT, type = NamespaceResource.class),
         @Dependent(name = ServiceAccountResource.COMPONENT, dependsOn = NamespaceResource.COMPONENT, type = ServiceAccountResource.class),
         @Dependent(name = ClusterRoleResource.COMPONENT, type = ClusterRoleResource.class),
-        @Dependent(name = ClusterRoleBindingResource.COMPONENT, type = ClusterRoleBindingResource.class)
+        @Dependent(name = ClusterRoleBindingResource.COMPONENT, type = ClusterRoleBindingResource.class),
+        @Dependent(name = SecretExportResource.COMPONENT, type = SecretExportResource.class, dependsOn = NamespaceResource.COMPONENT),
 })
 public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResource> {
 

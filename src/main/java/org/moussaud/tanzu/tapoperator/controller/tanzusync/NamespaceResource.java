@@ -22,7 +22,7 @@ public class NamespaceResource extends KubernetesDependentResource<Namespace, Ta
     protected Namespace desired(TapResource primary, Context<TapResource> context) {
         return new NamespaceBuilder()
                 .withMetadata(new ObjectMetaBuilder()
-                        .withName(COMPONENT)                       
+                        .withName(COMPONENT)
                         .build())
                 .build();
     }
