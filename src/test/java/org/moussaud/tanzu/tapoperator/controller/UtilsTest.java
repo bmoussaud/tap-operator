@@ -6,6 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.moussaud.tanzu.tapoperator.resource.TapSpec;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+
 public class UtilsTest {
 
     @Test
@@ -62,4 +67,29 @@ public class UtilsTest {
         assertEquals("1.7.1", Utils.getClusterEssentialsBundleVersion(resource));
     }
 
+    @Test
+    void testgetDockerConfigJsonTarget() {
+        Map<String, String> input = getEncodedSecret();
+        String encodedjson = Utils.getDockerConfigJsonTarget(input).get(".dockerconfigjson");
+        assertEquals("eyJhdXRocyI6eyJha3NldXRhcDdyZWdpc3RyeS5henVyZWNyLmlvIjp7ImF1dGgiOiJPVFZpTXpnd1lXWXROR0l6WmkwME5XUTJMV0ptWmpndE1qWm1NalZrTUdJeFpHSXlPa1JwTlRoUmZsOVhkV2R4V1ZFMUxsaEljelV5UTBSMVZsWkhNVlV5VTJoaVQyTnpNMGhoT1RBPSIsInBhc3N3b3JkIjoiRGk1OFF+X1d1Z3FZUTUuWEhzNTJDRHVWVkcxVTJTaGJPY3MzSGE5MCIsInVzZXJuYW1lIjoiOTViMzgwYWYtNGIzZi00NWQ2LWJmZjgtMjZmMjVkMGIxZGIyIn19fQ==", encodedjson);
+    }
+
+    private Map<String, String> getEncodedSecret() {
+        Map<String, String> data = new HashMap<>();
+        data.put("TO_REGISTRY_HOSTNAME", encode("akseutap7registry.azurecr.io"));
+        data.put("TO_REGISTRY_USERNAME", encode("95b380af-4b3f-45d6-bff8-26f25d0b1db2"));
+        data.put("TO_REGISTRY_PASSWORD", encode("Di58Q~_WugqYQ5.XHs52CDuVVG1U2ShbOcs3Ha90"));
+        return data;
+    }
+
+
+    private static String encode(String s) {
+        try {
+            return Base64.getEncoder().encodeToString(s.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return "X";
+        }
+    }
 }

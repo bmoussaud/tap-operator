@@ -1,16 +1,15 @@
 package org.moussaud.tanzu.tapoperator.controller;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +41,37 @@ public class Utils {
         log.trace("secret data {}", newData);
         return newData;
 
+    }
+
+    public static Map<String, String> getDockerConfigJsonTarget(Map<String, String> data) {
+        DockerConfigEntry entry = new DockerConfigEntry(decode(data.get("TO_REGISTRY_USERNAME")), decode(data.get("TO_REGISTRY_PASSWORD")));
+        DockerConfig target = new DockerConfig();
+        target.add(decode(data.get("TO_REGISTRY_HOSTNAME")), entry);
+
+        ObjectMapper mapper = new ObjectMapper();
+        //mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+        StringWriter stringEmp = new StringWriter();
+        try {
+            mapper.writeValue(stringEmp, target);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        data = new HashMap<>();
+        data.put(".dockerconfigjson", encode(stringEmp.toString()));
+        return data;
+/*
+        {
+            "auths":{
+            "akseutap7registry.azurecr.io":{
+                "auth":
+                "OTViMzgwYWYtNGIzZi00NWQ2LWJmZjgtMjZmMjVkMGIxZGIyOkRpNThRfl9XdWdxWVE1LlhIczUyQ0R1VlZHMVUyU2hiT2NzM0hhOTA=", "password":
+                "Di58Q~_WugqYQ5.XHs52CDuVVG1U2ShbOcs3Ha90", "username":"95b380af-4b3f-45d6-bff8-26f25d0b1db2"
+            }
+        }
+        }%
+
+
+*/
     }
 
     public static String getPostgresVersion(TapResource resource) {
@@ -91,14 +121,12 @@ public class Utils {
 
     private static String decode(String encoded) {
         byte[] decoded = Base64.getDecoder().decode(encoded);
-        String decodedStr = new String(decoded, StandardCharsets.UTF_8);
-        return decodedStr;
+        return new String(decoded, StandardCharsets.UTF_8);
     }
 
     private static String encode(String s) {
         try {
-            String x = Base64.getEncoder().encodeToString(s.getBytes("UTF-8"));
-            return x;
+            return Base64.getEncoder().encodeToString(s.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

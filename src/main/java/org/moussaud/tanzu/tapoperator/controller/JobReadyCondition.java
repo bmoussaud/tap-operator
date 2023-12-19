@@ -15,7 +15,7 @@ public class JobReadyCondition implements Condition<Job, TapResource> {
 
     @Override
     public boolean isMet(DependentResource<Job, TapResource> dependentResource, TapResource primary,
-            Context<TapResource> context) {
+                         Context<TapResource> context) {
         return dependentResource.getSecondaryResource(primary, context)
                 .map(job -> {
                     TapOperatorManagedResource tomr = (TapOperatorManagedResource) dependentResource;
@@ -28,7 +28,7 @@ public class JobReadyCondition implements Condition<Job, TapResource> {
                                 primary.getMetadata().getName());
                         return false;
                     }
-                    log.info("isMet:{} runningJob: {} Status: {} ? ",primary.getMetadata().getName(), tomr.name(primary), runningJob.getStatus());
+                    log.info("isMet:{} runningJob: {} Status: {} ? ", primary.getMetadata().getName(), tomr.name(primary), runningJob.getStatus());
                     var succeeed = runningJob.getStatus().getSucceeded();
                     return succeeed != null && succeeed > 0;
                 })

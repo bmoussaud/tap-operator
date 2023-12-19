@@ -16,30 +16,30 @@ import io.fabric8.kubernetes.api.model.batch.v1.Job;
 
 public class JobEssentialBundleDeployResource extends BaseJobResource {
 
-        public static final String COMPONENT = "essential-bundle-deploy";
-        
-        public JobEssentialBundleDeployResource() {
-                super(Job.class, COMPONENT);
-        }
+    public static final String COMPONENT = "essential-bundle-deploy";
 
-        @Override
-        protected List<Container> getContainer(TapResource primary) {
-                var image = "ghcr.io/alexandreroman/tanzu-cluster-essentials-bootstrap:kbld-rand-1699444742098385476-8669215173182";
-                return Collections.singletonList(new ContainerBuilder()
-                                .withName(COMPONENT)
-                                .withImage(image)
-                                .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
-                                .withEnv(Arrays.asList(
-                                                new EnvVar("PACKAGE",
-                                                                "tanzu-cluster-essentials/cluster-essentials-bundle",
-                                                                null),
-                                                new EnvVar("VERSION", Utils.getClusterEssentialsBundleVersion(primary),
-                                                                null)))
-                                .withEnvFrom(new EnvFromSourceBuilder()
-                                                .withNewSecretRef(getSecretName(primary), false)
-                                                .build())
-                                .build());
-        }
+    public JobEssentialBundleDeployResource() {
+        super(Job.class, COMPONENT);
+    }
 
-       
+    @Override
+    protected List<Container> getContainer(TapResource primary) {
+        var image = "ghcr.io/alexandreroman/tanzu-cluster-essentials-bootstrap:kbld-rand-1699444742098385476-8669215173182";
+        return Collections.singletonList(new ContainerBuilder()
+                .withName(COMPONENT)
+                .withImage(image)
+                .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
+                .withEnv(Arrays.asList(
+                        new EnvVar("PACKAGE",
+                                "tanzu-cluster-essentials/cluster-essentials-bundle",
+                                null),
+                        new EnvVar("VERSION", Utils.getClusterEssentialsBundleVersion(primary),
+                                null)))
+                .withEnvFrom(new EnvFromSourceBuilder()
+                        .withNewSecretRef(getSecretName(primary), false)
+                        .build())
+                .build());
+    }
+
+
 }

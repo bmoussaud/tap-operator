@@ -2,16 +2,11 @@ package org.moussaud.tanzu.tapoperator.controller;
 
 import java.time.Duration;
 
-import org.moussaud.tanzu.tapoperator.controller.tanzusync.ClusterRoleBindingResource;
-import org.moussaud.tanzu.tapoperator.controller.tanzusync.ClusterRoleResource;
-import org.moussaud.tanzu.tapoperator.controller.tanzusync.NamespaceResource;
-import org.moussaud.tanzu.tapoperator.controller.tanzusync.SecretExportResource;
-import org.moussaud.tanzu.tapoperator.controller.tanzusync.ServiceAccountResource;
+import org.moussaud.tanzu.tapoperator.controller.tanzusync.*;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.fabric8.kubernetes.api.model.ServiceAccount;
 import io.javaoperatorsdk.operator.api.reconciler.Cleaner;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
 import io.javaoperatorsdk.operator.api.reconciler.ControllerConfiguration;
@@ -40,6 +35,7 @@ import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
         @Dependent(name = ClusterRoleResource.COMPONENT, type = ClusterRoleResource.class),
         @Dependent(name = ClusterRoleBindingResource.COMPONENT, type = ClusterRoleBindingResource.class),
         @Dependent(name = SecretExportResource.COMPONENT, type = SecretExportResource.class, dependsOn = NamespaceResource.COMPONENT),
+        @Dependent(name = InstallRegistryDockerConfigSecretResource.COMPONENT + "-sec", type = InstallRegistryDockerConfigSecretResource.class, dependsOn = NamespaceResource.COMPONENT),
 })
 public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResource> {
 

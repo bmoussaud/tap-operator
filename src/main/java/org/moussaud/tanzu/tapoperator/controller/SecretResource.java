@@ -2,6 +2,7 @@ package org.moussaud.tanzu.tapoperator.controller;
 
 import java.util.Map;
 
+import org.jetbrains.annotations.NotNull;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,15 +30,9 @@ public class SecretResource extends BaseResource<Secret> {
     }
 
     private Map<String, String> buildDataFromSecret(TapResource resource, Context<TapResource> context) {
-        // TODO Fix this : why the CRD does not return the default value.
-        var secretName = (resource.getSpec().getSecret() == null ? "tap-operator-registry-credentials"
-                : resource.getSpec().getSecret());
-        var secret = context.getClient().secrets().inNamespace(resource.getMetadata().getNamespace())
-                .withName(secretName).get();
-        if (secret == null) {
-            throw new RuntimeException(String.format("{} secret not found in the {} namespace ",
-                    secretName, resource.getMetadata().getNamespace()));
-        }
+        var secret = getSecret(resource, context);
         return Utils.computeEnvironmentVariables(resource, secret.getData());
     }
+
+
 }
