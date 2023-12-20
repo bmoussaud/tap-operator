@@ -5,15 +5,13 @@ import io.fabric8.kubernetes.api.model.SecretBuilder;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
 import org.moussaud.tanzu.tapoperator.controller.Utils;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class InstallRegistryDockerConfigSecretResource extends BaseSecretResource {
+public class InstallRegistryDockerConfigSecretResource extends TanzuSyncResource<Secret> {
 
     public static final String COMPONENT = "install-registry-dockerconfig";
-    
+
     public InstallRegistryDockerConfigSecretResource() {
-        super(COMPONENT);
+        super(Secret.class, COMPONENT);
     }
 
     @Override

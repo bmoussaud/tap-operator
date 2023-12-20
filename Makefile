@@ -59,6 +59,11 @@ clean_all: $(eval SHELL:=/bin/bash)
 	kubectl patch  tapresource.org.moussaud.tanzu "mytap" -p '{"metadata":{"finalizers":[]}}' --type=merge
 	kubectl delete -f src/test/resources/test-tap-operator.yaml -f target/classes/META-INF/fabric8/tapresources.org.moussaud.tanzu-v1.yml   -f config 
 
+check-tanzu-sync:
+	kubectl get ns tanzu-sync -o yaml
+	kubectl get clusterrole tanzu-sync-cluster-admin -o yaml
+	kubectl get clusterrolebinding tanzu-sync-cluster-crb-admin -o yaml
+	kubectl get sa,secret,secretexport -n tanzu-sync
 
 k8s_deploy_operator: deploy-crd deploy-config
 

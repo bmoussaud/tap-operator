@@ -1,20 +1,22 @@
 package org.moussaud.tanzu.tapoperator.controller.tanzusync;
 
 import io.fabric8.kubernetes.api.model.HasMetadata;
-import io.fabric8.kubernetes.api.model.Namespace;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
 import io.javaoperatorsdk.operator.api.reconciler.dependent.Deleter;
 import io.javaoperatorsdk.operator.processing.dependent.Creator;
-import io.javaoperatorsdk.operator.processing.dependent.kubernetes.CRUDKubernetesDependentResource;
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDependentResource;
-import org.jetbrains.annotations.NotNull;
-import org.moussaud.tanzu.tapoperator.controller.BaseResource;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 
-public abstract class BaseSecretResource extends KubernetesDependentResource<Secret, TapResource>
-        implements Creator<Secret, TapResource>, Deleter<TapResource> {
+public class TanzuSyncResource<R extends HasMetadata> extends KubernetesDependentResource<R, TapResource>
+        implements Creator<R, TapResource>, Deleter<TapResource> {
+    private final String component;
+
+    public TanzuSyncResource(Class<R> resourceType, String component) {
+        super(resourceType);
+        this.component = component;
+    }
 
 
     private static final String K8S_NAME = "app.kubernetes.io/name";
@@ -22,27 +24,11 @@ public abstract class BaseSecretResource extends KubernetesDependentResource<Sec
     private static final String K8S_MANAGED_BY = "app.kubernetes.io/managed-by";
     private static final String K8S_OWNER = "tap-operator";
 
-    private final String component;
-
-    public BaseSecretResource(String component) {
-        super(Secret.class);
-        this.component = component;
-    }
-
-    public String name(TapResource primary) {
-        return component;
-    }
-
-    protected String getNamespace(TapResource primary) {
-        return "tanzu-sync";
-    }
-
     protected ObjectMetaBuilder createMeta(TapResource primary) {
-        String name = name(primary);
         return new ObjectMetaBuilder()
-                .withName(name)
-                .withNamespace(getNamespace(primary))
-                .addToLabels(K8S_NAME, primary.getMetadata().getName())
+                .withName(this.component)
+                .withNamespace(NamespaceResource.COMPONENT)
+                .addToLabels(K8S_NAME, component)
                 .addToLabels(K8S_COMPONENT, component)
                 .addToLabels(K8S_MANAGED_BY, K8S_OWNER);
     }
@@ -59,6 +45,4 @@ public abstract class BaseSecretResource extends KubernetesDependentResource<Sec
         }
         return secret;
     }
-
-
 }
