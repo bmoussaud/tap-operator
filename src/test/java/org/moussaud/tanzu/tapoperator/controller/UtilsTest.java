@@ -74,11 +74,19 @@ public class UtilsTest {
         assertEquals("eyJhdXRocyI6eyJha3NldXRhcDdyZWdpc3RyeS5henVyZWNyLmlvIjp7ImF1dGgiOiJPVFZpTXpnd1lXWXROR0l6WmkwME5XUTJMV0ptWmpndE1qWm1NalZrTUdJeFpHSXlPa1JwTlRoUmZsOVhkV2R4V1ZFMUxsaEljelV5UTBSMVZsWkhNVlV5VTJoaVQyTnpNMGhoT1RBPSIsInBhc3N3b3JkIjoiRGk1OFF+X1d1Z3FZUTUuWEhzNTJDRHVWVkcxVTJTaGJPY3MzSGE5MCIsInVzZXJuYW1lIjoiOTViMzgwYWYtNGIzZi00NWQ2LWJmZjgtMjZmMjVkMGIxZGIyIn19fQ==", encodedjson);
     }
 
+    @Test
+    void testgetAgeSecretKey() {
+        Map<String, String> input = getEncodedSecret();
+        String encoded = Utils.getAgeSecretKey(input).get("key.txt");
+        assertEquals("QUdFLVNFQ1JFVC1LRVktMTIzYXplcnR5dWlvcGtxamRsbWtmamxta3NkamZtbGtxc2ptbGZramJvbmpvdXI=", encoded);
+    }
+
     private Map<String, String> getEncodedSecret() {
         Map<String, String> data = new HashMap<>();
         data.put("TO_REGISTRY_HOSTNAME", encode("akseutap7registry.azurecr.io"));
         data.put("TO_REGISTRY_USERNAME", encode("95b380af-4b3f-45d6-bff8-26f25d0b1db2"));
         data.put("TO_REGISTRY_PASSWORD", encode("Di58Q~_WugqYQ5.XHs52CDuVVG1U2ShbOcs3Ha90"));
+        data.put("AGE_SECRET_KEY", encode("AGE-SECRET-KEY-123azertyuiopkqjdlmkfjlmksdjfmlkqsjmlfkjbonjour"));
         return data;
     }
 

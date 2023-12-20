@@ -49,7 +49,6 @@ public class Utils {
         target.add(decode(data.get("TO_REGISTRY_HOSTNAME")), entry);
 
         ObjectMapper mapper = new ObjectMapper();
-        //mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         StringWriter stringEmp = new StringWriter();
         try {
             mapper.writeValue(stringEmp, target);
@@ -59,20 +58,12 @@ public class Utils {
         data = new HashMap<>();
         data.put(".dockerconfigjson", encode(stringEmp.toString()));
         return data;
-/*
-        {
-            "auths":{
-            "akseutap7registry.azurecr.io":{
-                "auth":
-                "OTViMzgwYWYtNGIzZi00NWQ2LWJmZjgtMjZmMjVkMGIxZGIyOkRpNThRfl9XdWdxWVE1LlhIczUyQ0R1VlZHMVUyU2hiT2NzM0hhOTA=", "password":
-                "Di58Q~_WugqYQ5.XHs52CDuVVG1U2ShbOcs3Ha90", "username":"95b380af-4b3f-45d6-bff8-26f25d0b1db2"
-            }
-        }
-        }%
-
-
-*/
     }
+
+    public static Map<String, String> getAgeSecretKey(Map<String, String> data) {
+        return Collections.singletonMap("key.txt", data.get("AGE_SECRET_KEY"));
+    }
+
 
     public static String getPostgresVersion(TapResource resource) {
         return "1.12.1";
@@ -114,7 +105,7 @@ public class Utils {
             }
         }
 
-        String last = availableBundleVersions.get(availableBundleVersions.size() - 1);
+        String last = availableBundleVersions.getLast();
         log.trace("by default return the latest known version return {}", last);
         return last;
     }
@@ -133,5 +124,6 @@ public class Utils {
             return "X";
         }
     }
-
 }
+
+

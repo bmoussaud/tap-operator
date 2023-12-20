@@ -6,12 +6,13 @@ import io.javaoperatorsdk.operator.api.reconciler.Context;
 import org.moussaud.tanzu.tapoperator.controller.Utils;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 
-public class InstallRegistryDockerConfigSecretResource extends TanzuSyncResource<Secret> {
+public class SecretInstallRegistryDockerConfigResource extends TanzuSyncResource<Secret> {
 
     public static final String COMPONENT = "install-registry-dockerconfig";
 
-    public InstallRegistryDockerConfigSecretResource() {
+    public SecretInstallRegistryDockerConfigResource() {
         super(Secret.class, COMPONENT);
+        setResourceDiscriminator(new SecretDiscriminator(COMPONENT));
     }
 
     @Override

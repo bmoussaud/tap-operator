@@ -35,7 +35,8 @@ import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
         @Dependent(name = ClusterRoleResource.COMPONENT, type = ClusterRoleResource.class),
         @Dependent(name = ClusterRoleBindingResource.COMPONENT, type = ClusterRoleBindingResource.class),
         @Dependent(name = SecretExportResource.COMPONENT, type = SecretExportResource.class, dependsOn = NamespaceResource.COMPONENT),
-        @Dependent(name = InstallRegistryDockerConfigSecretResource.COMPONENT + "-sec", type = InstallRegistryDockerConfigSecretResource.class, dependsOn = NamespaceResource.COMPONENT),
+        @Dependent(name = SecretInstallRegistryDockerConfigResource.COMPONENT + "-sec", type = SecretInstallRegistryDockerConfigResource.class, dependsOn = NamespaceResource.COMPONENT),
+        @Dependent(name = SecretSyncAgeIdentityResource.COMPONENT, type = SecretSyncAgeIdentityResource.class, dependsOn = NamespaceResource.COMPONENT),
 })
 public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResource> {
 
