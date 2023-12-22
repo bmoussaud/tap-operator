@@ -18,7 +18,7 @@ public class JobReadyCondition implements Condition<Job, TapResource> {
                          Context<TapResource> context) {
         return dependentResource.getSecondaryResource(primary, context)
                 .map(job -> {
-                    TapOperatorManagedResource tomr = (TapOperatorManagedResource) dependentResource;
+                    var tomr = (TapOperatorManagedResource) dependentResource;
                     log.trace("is Met {} with job {} ? ", primary.getMetadata().getName(), tomr.name(primary));
                     var runningJob = context.getClient().batch().v1().jobs()
                             .inNamespace(primary.getMetadata().getNamespace())

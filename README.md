@@ -25,6 +25,12 @@ stringData:
   TO_REGISTRY_HOSTNAME: #@ data.values.HOSTNAME
   TO_REGISTRY_USERNAME: #@ data.values.USERNAME
   TO_REGISTRY_PASSWORD: #@ data.values.PASSWORD
+  AGE_SECRET_KEY: AGE-SECRET-KEY-123skjldjflkqsjlkdsjlkjdslkjdlkfjskldjflksjfjs
+  # either (GIT_SSH_PRIVATEKEY+GIT_KNOWN_HOST) or (GIT_USERNAME + GIT_PASSWORD)
+  GIT_SSH_PRIVATEKEY: #@ data.values.PRIVATE_KEY
+  GIT_SSH_KNOWNHOSTS: #@ data.values.KNOWN_HOSTS
+  GIT_USERNAME: scott
+  GIT_PASSWORD: tiger
 ```
 ```
 git clone git@github.com:bmoussaud/tap-operator.git

@@ -5,3 +5,5 @@ metadata:
   namespace: tap-operator
 spec:
   version: 1.7.1
+  url: git@github.com:bmoussaud/tap-gitops.git
+  subPath: clusters/empty/cluster-config

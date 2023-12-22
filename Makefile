@@ -19,7 +19,10 @@ undeploy:
 	kubectl delete -f out/copy_packages
 
 gen_registry_secrets:
-	source  ~/.kube/acr/.akseutap7registry.config && ytt -f personal/registry-secrets.yaml --data-values-env INSTALL_REGISTRY --data-values-env REGISTRY > out/copy_packages/registry-secrets.yaml 
+	export SOPS_AGE_KEY="$(shell cat ~/dotconfig/tapkey.txt | grep -v "\#")" && \
+		export GIT_SSH_PRIVATEKEY="$(shell cat ~/dotconfig/.ssh/id_rsa)" && \
+		source  ~/.kube/acr/.akseutap7registry.config && \
+		ytt -f personal/registry-secrets.yaml --data-values-env INSTALL_REGISTRY --data-values-env REGISTRY  --data-values-env SOPS --data-values-env GIT> out/copy_packages/registry-secrets.yaml
 
 clean:
 	rm -rf out

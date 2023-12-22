@@ -1,17 +1,12 @@
 package org.moussaud.tanzu.tapoperator.controller;
 
+import io.fabric8.kubernetes.api.model.*;
+import io.fabric8.kubernetes.api.model.batch.v1.Job;
+import org.moussaud.tanzu.tapoperator.resource.TapResource;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import org.moussaud.tanzu.tapoperator.resource.TapResource;
-
-import io.fabric8.kubernetes.api.model.Container;
-import io.fabric8.kubernetes.api.model.ContainerBuilder;
-import io.fabric8.kubernetes.api.model.EnvFromSourceBuilder;
-import io.fabric8.kubernetes.api.model.EnvVar;
-import io.fabric8.kubernetes.api.model.SecurityContextBuilder;
-import io.fabric8.kubernetes.api.model.batch.v1.Job;
 
 public class JobEssentialBundleCopyResource extends BaseJobResource {
 

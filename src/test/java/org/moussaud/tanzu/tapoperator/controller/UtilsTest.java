@@ -1,7 +1,5 @@
 package org.moussaud.tanzu.tapoperator.controller;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.jupiter.api.Test;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.moussaud.tanzu.tapoperator.resource.TapSpec;
@@ -10,6 +8,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class UtilsTest {
 
@@ -81,12 +82,29 @@ public class UtilsTest {
         assertEquals("QUdFLVNFQ1JFVC1LRVktMTIzYXplcnR5dWlvcGtxamRsbWtmamxta3NkamZtbGtxc2ptbGZramJvbmpvdXI=", encoded);
     }
 
+
+    @Test
+    void testSyncGitKey() {
+        Map<String, String> input = getEncodedSecret();
+        Map<String, String> result = Utils.getSyncGit(input);
+        assertEquals(4, result.size());
+        assertTrue(result.containsKey("ssh-privatekey"));
+        assertTrue(result.containsKey("ssh-knownhosts"));
+        assertTrue(result.containsKey("username"));
+        assertTrue(result.containsKey("password"));
+    }
+
     private Map<String, String> getEncodedSecret() {
         Map<String, String> data = new HashMap<>();
         data.put("TO_REGISTRY_HOSTNAME", encode("akseutap7registry.azurecr.io"));
         data.put("TO_REGISTRY_USERNAME", encode("95b380af-4b3f-45d6-bff8-26f25d0b1db2"));
         data.put("TO_REGISTRY_PASSWORD", encode("Di58Q~_WugqYQ5.XHs52CDuVVG1U2ShbOcs3Ha90"));
         data.put("AGE_SECRET_KEY", encode("AGE-SECRET-KEY-123azertyuiopkqjdlmkfjlmksdjfmlkqsjmlfkjbonjour"));
+        data.put("GIT_SSH_PRIVATEKEY", encode("MYKEY"));
+        data.put("GIT_SSH_KNOWNHOSTS", encode("MYHOSTS"));
+        data.put("GIT_USERNAME", encode("SCOTT"));
+        data.put("GIT_PASSWORD", encode("TIGER"));
+
         return data;
     }
 

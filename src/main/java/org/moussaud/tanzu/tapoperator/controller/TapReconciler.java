@@ -1,19 +1,13 @@
 package org.moussaud.tanzu.tapoperator.controller;
 
-import java.time.Duration;
-
+import io.javaoperatorsdk.operator.api.reconciler.*;
+import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
 import org.moussaud.tanzu.tapoperator.controller.tanzusync.*;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.javaoperatorsdk.operator.api.reconciler.Cleaner;
-import io.javaoperatorsdk.operator.api.reconciler.Context;
-import io.javaoperatorsdk.operator.api.reconciler.ControllerConfiguration;
-import io.javaoperatorsdk.operator.api.reconciler.DeleteControl;
-import io.javaoperatorsdk.operator.api.reconciler.Reconciler;
-import io.javaoperatorsdk.operator.api.reconciler.UpdateControl;
-import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
+import java.time.Duration;
 
 @ControllerConfiguration(dependents = {
         // @Dependent(name = SecretResource.COMPONENT, type = SecretResource.class),
@@ -37,6 +31,8 @@ import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
         @Dependent(name = SecretExportResource.COMPONENT, type = SecretExportResource.class, dependsOn = NamespaceResource.COMPONENT),
         @Dependent(name = SecretInstallRegistryDockerConfigResource.COMPONENT + "-sec", type = SecretInstallRegistryDockerConfigResource.class, dependsOn = NamespaceResource.COMPONENT),
         @Dependent(name = SecretSyncAgeIdentityResource.COMPONENT, type = SecretSyncAgeIdentityResource.class, dependsOn = NamespaceResource.COMPONENT),
+        @Dependent(name = SecretSyncGitResource.COMPONENT, type = SecretSyncGitResource.class, dependsOn = NamespaceResource.COMPONENT),
+        @Dependent(name = AppResource.COMPONENT, type = AppResource.class, dependsOn = NamespaceResource.COMPONENT, readyPostcondition = AppReadyCondition.class, deletePostcondition = AppDeleteCondition.class)
 })
 public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResource> {
 
