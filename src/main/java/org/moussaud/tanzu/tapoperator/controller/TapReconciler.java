@@ -32,7 +32,9 @@ import java.time.Duration;
         @Dependent(name = SecretInstallRegistryDockerConfigResource.COMPONENT + "-sec", type = SecretInstallRegistryDockerConfigResource.class, dependsOn = NamespaceResource.COMPONENT),
         @Dependent(name = SecretSyncAgeIdentityResource.COMPONENT, type = SecretSyncAgeIdentityResource.class, dependsOn = NamespaceResource.COMPONENT),
         @Dependent(name = SecretSyncGitResource.COMPONENT, type = SecretSyncGitResource.class, dependsOn = NamespaceResource.COMPONENT),
-        @Dependent(name = AppResource.COMPONENT, type = AppResource.class, dependsOn = NamespaceResource.COMPONENT, readyPostcondition = AppReadyCondition.class, deletePostcondition = AppDeleteCondition.class)
+        @Dependent(name = AppResource.COMPONENT, type = AppResource.class,
+                dependsOn = {ServiceAccountResource.COMPONENT, SecretSyncGitResource.COMPONENT, SecretSyncAgeIdentityResource.COMPONENT, SecretInstallRegistryDockerConfigResource.COMPONENT + "-sec", SecretExportResource.COMPONENT, ClusterRoleBindingResource.COMPONENT, ClusterRoleResource.COMPONENT},
+                readyPostcondition = AppReadyCondition.class, deletePostcondition = AppDeleteCondition.class)
 })
 public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResource> {
 

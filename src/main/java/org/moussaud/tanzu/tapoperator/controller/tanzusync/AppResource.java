@@ -1,6 +1,5 @@
 package org.moussaud.tanzu.tapoperator.controller.tanzusync;
 
-import io.fabric8.kubernetes.api.model.ServiceAccount;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
 import io.k14s.kappctrl.v1alpha1.App;
 import io.k14s.kappctrl.v1alpha1.AppSpec;
@@ -72,8 +71,20 @@ public class AppResource extends TanzuSyncResource<App> {
         return desired;
     }
 
-    @Override
-    protected void handleDelete(TapResource primary, App secondary, Context<TapResource> context) {
-        super.handleDelete(primary, secondary, context);
+
+    protected void xxxxxHandleDelete(TapResource primary, App secondary, Context<TapResource> context) {
+        if (secondary != null) {
+            var timeoutMillis = 60 * 1000;
+            log.warn("Delete {} {}/{} wait {}", primary.getMetadata().getName(), secondary.getKind(), secondary.getMetadata().getName(), timeoutMillis);
+            context.getClient().resource(secondary).delete();
+            if (timeoutMillis < 0) {
+                log.warn("Wait {} ms...", timeoutMillis);
+                try {
+                    Thread.sleep(timeoutMillis);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 }
