@@ -63,10 +63,17 @@ clean_all: $(eval SHELL:=/bin/bash)
 	kubectl delete -f src/test/resources/test-tap-operator.yaml -f target/classes/META-INF/fabric8/tapresources.org.moussaud.tanzu-v1.yml   -f config 
 
 check-tanzu-sync:
-	kubectl get ns tanzu-sync -o yaml
-	kubectl get clusterrole tanzu-sync-cluster-admin -o yaml
-	kubectl get clusterrolebinding tanzu-sync-cluster-crb-admin -o yaml
+	kubectl get ns tanzu-sync
+	kubectl get clusterrole tanzu-sync-cluster-admin
+	kubectl get clusterrolebinding tanzu-sync-cluster-crb-admin
 	kubectl get sa,secret,secretexport -n tanzu-sync
+
+
+delete-tanzu-sync:
+	kubectl delete clusterrole tanzu-sync-cluster-admin
+	kubectl delete clusterrolebinding tanzu-sync-cluster-crb-admin
+	kubectl delete sa,secret,secretexport --all -n tanzu-sync
+	kubectl delete ns tanzu-sync
 
 k8s_deploy_operator: deploy-crd deploy-config
 

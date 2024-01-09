@@ -21,7 +21,6 @@ public abstract class BaseJobResource extends BaseResource<Job> {
 
     public BaseJobResource(Class<Job> resourceType, String component) {
         super(resourceType, component);
-        setResourceDiscriminator(new Discriminator(component));
     }
 
     protected String getSecretName(TapResource primary) {
@@ -29,14 +28,6 @@ public abstract class BaseJobResource extends BaseResource<Job> {
     }
 
     protected abstract List<Container> getContainer(TapResource primary);
-
-    class Discriminator
-            extends ResourceIDMatcherDiscriminator<Job, TapResource> {
-        public Discriminator(String component) {
-            super(p -> new ResourceID(p.getMetadata().getName() + "-" + component,
-                    p.getMetadata().getNamespace()));
-        }
-    }
 
     @Override
     protected Job desired(TapResource primary, Context<TapResource> context) {

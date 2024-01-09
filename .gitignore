@@ -12,3 +12,4 @@ out.json
 tanzu-gitops-ri-0.3.3.tgz
 item.json
 .idea/
+tanzu-sync.yaml

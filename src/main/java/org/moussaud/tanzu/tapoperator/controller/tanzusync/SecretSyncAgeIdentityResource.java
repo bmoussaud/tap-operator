@@ -12,7 +12,6 @@ public class SecretSyncAgeIdentityResource extends TanzuSyncResource<Secret> {
 
     public SecretSyncAgeIdentityResource() {
         super(Secret.class, COMPONENT);
-        setResourceDiscriminator(new SecretDiscriminator(COMPONENT));
     }
 
     @Override

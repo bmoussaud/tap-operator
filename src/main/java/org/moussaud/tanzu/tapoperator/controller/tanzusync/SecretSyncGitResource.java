@@ -16,7 +16,6 @@ public class SecretSyncGitResource extends TanzuSyncResource<Secret> {
 
     public SecretSyncGitResource() {
         super(Secret.class, COMPONENT);
-        setResourceDiscriminator(new SecretDiscriminator(COMPONENT));
     }
 
     @Override

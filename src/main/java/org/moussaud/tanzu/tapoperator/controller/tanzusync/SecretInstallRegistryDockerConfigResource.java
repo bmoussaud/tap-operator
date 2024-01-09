@@ -12,7 +12,6 @@ public class SecretInstallRegistryDockerConfigResource extends TanzuSyncResource
 
     public SecretInstallRegistryDockerConfigResource() {
         super(Secret.class, COMPONENT);
-        setResourceDiscriminator(new SecretDiscriminator(COMPONENT));
     }
 
     @Override

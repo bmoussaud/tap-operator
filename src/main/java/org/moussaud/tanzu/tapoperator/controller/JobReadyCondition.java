@@ -29,8 +29,8 @@ public class JobReadyCondition implements Condition<Job, TapResource> {
                         return false;
                     }
                     log.info("isMet:{} runningJob: {} Status: {} ? ", primary.getMetadata().getName(), tomr.name(primary), runningJob.getStatus());
-                    var succeeed = runningJob.getStatus().getSucceeded();
-                    return succeeed != null && succeeed > 0;
+                    var succeeded = runningJob.getStatus().getSucceeded();
+                    return succeeded != null && succeeded > 0;
                 })
                 .orElse(false);
     }
