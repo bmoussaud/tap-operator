@@ -1,6 +1,7 @@
 package org.moussaud.tanzu.tapoperator.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.ObjectUtils;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,12 +79,16 @@ public class Utils {
 
 
 
-    public static String getPostgresVersion(TapResource resource) {
-        return "1.12.1";
-    }
-
     public static String getClusterEssentialsBundleVersion(TapResource resource) {
-        return _getClusterEssentialsBundleVersion(resource.getSpec().getVersion().trim());
+
+        var clusterEssentialsBundleVersion = resource.getSpec().getClusterEssentialsBundleVersion();
+        if (ObjectUtils.isNotEmpty(clusterEssentialsBundleVersion)) {
+            return clusterEssentialsBundleVersion;
+        } else {
+            var computed = _getClusterEssentialsBundleVersion(resource.getSpec().getVersion().trim());
+            resource.getSpec().setClusterEssentialsBundleVersion(computed);
+            return computed;
+        }
     }
 
     private static final Pattern REG_EXP_RC = Pattern.compile("^(\\d+\\.\\d+\\.\\d+)(?:-([a-zA-Z]+)\\.(\\d+))?$");

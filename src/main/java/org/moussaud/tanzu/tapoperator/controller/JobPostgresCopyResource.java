@@ -17,8 +17,8 @@ public class JobPostgresCopyResource extends BaseJobResource {
         super(Job.class, COMPONENT);
     }
 
-    // TODO imgpkg tag list -i
-    // registry.tanzu.vmware.com/tanzu-sql-postgres/vmware-sql-postgres-operator
+    // TODO imgpkg tag list -i registry.tanzu.vmware.com/tanzu-sql-postgres/vmware-sql-postgres-operator
+    // TODO: HELM  https://docs.vmware.com/en/VMware-SQL-with-Postgres-for-Kubernetes/2.2/vmware-postgres-k8s/GUID-install-operator.html
     @Override
     protected List<Container> getContainer(TapResource primary) {
         var image = "ghcr.io/bmoussaud/tap-operator-copy-packages:v0.0.3";
@@ -30,7 +30,7 @@ public class JobPostgresCopyResource extends BaseJobResource {
                         new EnvVar("PACKAGE",
                                 "packages-for-vmware-tanzu-data-services/tds-packages",
                                 null),
-                        new EnvVar("VERSION", Utils.getPostgresVersion(primary),
+                        new EnvVar("VERSION", primary.getSpec().getPostgresVersion(),
                                 null)))
                 .withEnvFrom(new EnvFromSourceBuilder()
                         .withNewSecretRef(getSecretName(primary), false)

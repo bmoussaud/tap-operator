@@ -27,7 +27,7 @@ public abstract class BaseResource<R extends HasMetadata> extends CRUDKubernetes
     public BaseResource(Class<R> resourceType, String component) {
         super(resourceType);
         this.component = component;
-        log.info("set Discriminator on {}/{}", resourceType.getSimpleName(), this.component);
+        log.trace("set Discriminator on {}/{}", resourceType.getSimpleName(), this.component);
         setResourceDiscriminator(new Discriminator(component));
     }
 
