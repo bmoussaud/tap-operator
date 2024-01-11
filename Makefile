@@ -20,7 +20,7 @@ undeploy:
 
 gen_registry_secrets:
 	export SOPS_AGE_KEY="$(shell cat ~/dotconfig/tapkey.txt | grep -v "\#")" && \
-		source  ~/.kube/acr/.akseutap7registry.config && \
+		source  ~/.kube/acr/.akseutap8registry.config && \
 		ytt -f ytt/registry-secrets.template.yaml --data-values-env INSTALL_REGISTRY --data-value-file SSH_PRIVATEKEY=~/dotconfig/.ssh/id_rsa --data-values-env REGISTRY  --data-values-env SOPS --data-values-env GIT> config/registry-secrets.yaml
 
 clean:
@@ -32,6 +32,7 @@ redeploy: build-and-push-image
 
 deploy-crd:
 	kubectl apply -f target/classes/META-INF/fabric8/tapresources.org.moussaud.tanzu-v1.yml
+	kubectl apply -f src/main/resources/kubernetes/apps.kappctrl.k14s.io.yaml -f src/main/resources/kubernetes/secretexports.secretgen.carvel.dev.yaml
 
 deploy-config: gen_registry_secrets
 	kubectl apply -f config
