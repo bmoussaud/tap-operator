@@ -11,18 +11,24 @@ import java.time.Duration;
 
 @ControllerConfiguration(dependents = {
         @Dependent(name = SecretResource.COMPONENT, type = SecretResource.class),
-        @Dependent(name = JobEssentialBundleCopyResource.COMPONENT, dependsOn =
-                SecretResource.COMPONENT, type = JobEssentialBundleCopyResource.class,
+        @Dependent(name = JobEssentialBundleCopyResource.COMPONENT,
+                dependsOn = SecretResource.COMPONENT,
+                type = JobEssentialBundleCopyResource.class,
                 readyPostcondition = JobReadyCondition.class),
-        @Dependent(name = JobEssentialBundleDeployResource.COMPONENT, dependsOn =
-                JobEssentialBundleCopyResource.COMPONENT, type =
-                JobEssentialBundleDeployResource.class, readyPostcondition =
-                JobReadyCondition.class),
-        @Dependent(name = JobTapCopyResource.COMPONENT, dependsOn =
-                SecretResource.COMPONENT, type = JobTapCopyResource.class, readyPostcondition = JobReadyCondition.class),
-        @Dependent(name = JobPostgresCopyResource.COMPONENT, dependsOn =
-                SecretResource.COMPONENT, type = JobPostgresCopyResource.class, readyPostcondition = JobReadyCondition.class),
-        @Dependent(name = NamespaceResource.COMPONENT, type = NamespaceResource.class, dependsOn = JobEssentialBundleDeployResource.COMPONENT),
+        @Dependent(name = JobEssentialBundleDeployResource.COMPONENT,
+                dependsOn = JobEssentialBundleCopyResource.COMPONENT,
+                type = JobEssentialBundleDeployResource.class,
+                readyPostcondition = JobReadyCondition.class),
+        @Dependent(name = JobTapCopyResource.COMPONENT,
+                dependsOn = SecretResource.COMPONENT,
+                type = JobTapCopyResource.class,
+                readyPostcondition = JobReadyCondition.class),
+        @Dependent(name = JobPostgresCopyResource.COMPONENT,
+                dependsOn = SecretResource.COMPONENT,
+                type = JobPostgresCopyResource.class,
+                readyPostcondition = JobReadyCondition.class),
+        @Dependent(name = NamespaceResource.COMPONENT, type = NamespaceResource.class,
+                dependsOn = {JobEssentialBundleDeployResource.COMPONENT, JobTapCopyResource.COMPONENT, JobPostgresCopyResource.COMPONENT}),
         @Dependent(name = ServiceAccountResource.COMPONENT, dependsOn = NamespaceResource.COMPONENT, type = ServiceAccountResource.class),
         @Dependent(name = ClusterRoleResource.COMPONENT, type = ClusterRoleResource.class),
         @Dependent(name = ClusterRoleBindingResource.COMPONENT, type = ClusterRoleBindingResource.class),
