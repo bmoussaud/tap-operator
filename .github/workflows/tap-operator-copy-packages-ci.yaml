@@ -37,6 +37,18 @@ jobs:
         run: mvn spring-boot:build-image -Dspring-boot.build-image.imageName=${{ steps.meta.outputs.tags }}
       - name: Push Image
         run: docker push ${{ steps.meta.outputs.tags }}
+      - name: Archive Release
+        uses: thedoctor0/zip-release@0.7.5
+        with:
+          type: 'zip'
+          filename: 'tap-operator.zip'
+          path: config
+          command: cp target/classes/META-INF/fabric8/tapresources.org.moussaud.tanzu-v1.yml config/
+      - name: Upload Release
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          artifacts: "tap-operator.zip"
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   build-copy-packages-image:
     runs-on: ubuntu-latest
