@@ -9,7 +9,7 @@ on:
       - "v*"
 
 jobs:
-  build-tap-operator:
+  release-tap-operator:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -50,7 +50,7 @@ jobs:
           artifacts: "tap-operator.zip"
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  build-copy-packages-image:
+  release-copy-packages-image:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
