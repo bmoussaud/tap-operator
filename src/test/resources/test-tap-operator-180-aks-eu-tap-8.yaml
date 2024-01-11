@@ -1,0 +1,9 @@
+apiVersion: org.moussaud.tanzu/v1
+kind: TapResource
+metadata:
+  name: tap
+  namespace: tap-operator
+spec:
+  version: 1.8.0-build.65
+  url: git@github.com:bmoussaud/tap-gitops.git
+  subPath: clusters/aks-eu-tap-8/cluster-config
