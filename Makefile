@@ -20,9 +20,8 @@ undeploy:
 
 gen_registry_secrets:
 	export SOPS_AGE_KEY="$(shell cat ~/dotconfig/tapkey.txt | grep -v "\#")" && \
-		export GIT_SSH_PRIVATEKEY="$(shell cat ~/dotconfig/.ssh/id_rsa)" && \
 		source  ~/.kube/acr/.akseutap7registry.config && \
-		ytt -f personal/registry-secrets.yaml --data-values-env INSTALL_REGISTRY --data-values-env REGISTRY  --data-values-env SOPS --data-values-env GIT> out/copy_packages/registry-secrets.yaml
+		ytt -f ytt/registry-secrets.template.yaml --data-values-env INSTALL_REGISTRY --data-value-file SSH_PRIVATEKEY=~/dotconfig/.ssh/id_rsa --data-values-env REGISTRY  --data-values-env SOPS --data-values-env GIT> config/registry-secrets.yaml
 
 clean:
 	rm -rf out
@@ -34,7 +33,7 @@ redeploy: build-and-push-image
 deploy-crd:
 	kubectl apply -f target/classes/META-INF/fabric8/tapresources.org.moussaud.tanzu-v1.yml
 
-deploy-config:
+deploy-config: gen_registry_secrets
 	kubectl apply -f config
 
 deploy-local-config: gen_registry_secrets
