@@ -29,7 +29,7 @@ public class UtilsTest {
         TapSpec spec = new TapSpec();
         spec.setVersion("1.9.x");
         resource.setSpec(spec);
-        assertEquals("1.7.1", Utils.getClusterEssentialsBundleVersion(resource));
+        assertEquals("1.7.2", Utils.getClusterEssentialsBundleVersion(resource));
     }
 
     @Test
@@ -38,7 +38,7 @@ public class UtilsTest {
         TapSpec spec = new TapSpec();
         spec.setVersion("1.9.4-rc.3"); // 1.7.2-rc.6
         resource.setSpec(spec);
-        assertEquals("1.7.1", Utils.getClusterEssentialsBundleVersion(resource));
+        assertEquals("1.7.2", Utils.getClusterEssentialsBundleVersion(resource));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class UtilsTest {
         TapSpec spec = new TapSpec();
         spec.setVersion("1.8.0-build.38");
         resource.setSpec(spec);
-        assertEquals("1.7.1", Utils.getClusterEssentialsBundleVersion(resource));
+        assertEquals("1.7.2", Utils.getClusterEssentialsBundleVersion(resource));
     }
 
     @Test

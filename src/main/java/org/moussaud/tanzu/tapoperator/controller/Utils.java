@@ -23,7 +23,7 @@ public class Utils {
             "1.0.0", "1.1.0", "1.1.0-rc.1", "1.1.0-rc.2", "1.2.0", "1.2.0-rc.1", "1.3.0", "1.3.1", "1.3.2", "1.3.3",
             "1.3.4", "1.3.5", "1.4.0", "1.4.1", "1.4.2", "1.4.3", "1.4.4", "1.4.5", "1.4.6", "1.4.7", "1.5.0", "1.5.1",
             "1.5.2", "1.5.3", "1.5.4", "1.5.5", "1.5.6", "1.5.7", "1.6.0", "1.6.1", "1.6.2", "1.6.3", "1.6.4", "1.7.0",
-            "1.7.1");
+            "1.7.1", "1.7.2");
 
     public static Map<String, String> computeEnvironmentVariables(TapResource resource, Map<String, String> data) {
         String install_bundle_value = decode(data.get("TO_REGISTRY_HOSTNAME"))
@@ -75,8 +75,6 @@ public class Utils {
                 .collect(Collectors.toMap(Map.Entry::getKey,
                         Map.Entry::getValue));
     }
-
-
 
 
     public static String getClusterEssentialsBundleVersion(TapResource resource) {
