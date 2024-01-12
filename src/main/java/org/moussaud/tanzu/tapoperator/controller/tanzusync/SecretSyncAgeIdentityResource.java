@@ -19,7 +19,7 @@ public class SecretSyncAgeIdentityResource extends TanzuSyncResource<Secret> {
         var secret = getSecret(primary, context);
         return new SecretBuilder()
                 .withMetadata(createMeta(primary).build())
-                .withStringData(Utils.getAgeSecretKey(secret.getData()))
+                .withData(Utils.getAgeSecretKey(secret.getData()))
                 .build();
     }
 }
