@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.List;
 
 public class AppResource extends TanzuSyncResource<App> {
     public static final String COMPONENT = "sync";
@@ -31,6 +32,9 @@ public class AppResource extends TanzuSyncResource<App> {
 
     @Override
     protected App desired(TapResource primary, Context<TapResource> context) {
+
+        log.info("Desired {} {}", name(primary), resourceType());
+
         App desired = new App();
         desired.setMetadata(createMeta(primary).build());
         AppSpec spec = new AppSpec();
@@ -53,16 +57,19 @@ public class AppResource extends TanzuSyncResource<App> {
         age.setPrivateKeysSecretRef(pkr);
         var sops = new Sops();
         sops.setAge(age);
-        var template = new Template();
-        template.setSops(sops);
-        spec.setTemplate(Collections.singletonList(template));
+
+        var template_sops = new Template();
+        template_sops.setSops(sops);
 
         var valuesFrom = new ValuesFrom();
         valuesFrom.setPath("values");
         var ytt = new Ytt();
         ytt.setPaths(Collections.singletonList("config"));
         ytt.setValuesFrom(Collections.singletonList(valuesFrom));
-        template.setYtt(ytt);
+        var template_ytt = new Template();
+        template_ytt.setYtt(ytt);
+
+        spec.setTemplate(List.of(template_sops, template_ytt));
 
         var deploy = new Deploy();
         deploy.setKapp(new Kapp());
