@@ -7,7 +7,7 @@ import io.javaoperatorsdk.operator.api.reconciler.Context;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 
 public class ClusterRoleBindingResourceCluster extends ClusterBaseResource<ClusterRoleBinding> {
-    public static final String COMPONENT = "tanzu-sync-cluster-crb-admin";
+    public static final String COMPONENT = "tap-operator-cluster-crb-admin";
 
     public ClusterRoleBindingResourceCluster() {
         super(ClusterRoleBinding.class, COMPONENT);
