@@ -8,7 +8,6 @@ import io.javaoperatorsdk.operator.api.reconciler.ResourceIDMatcherDiscriminator
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.CRUDKubernetesDependentResource;
 import io.javaoperatorsdk.operator.processing.event.ResourceID;
 import org.jetbrains.annotations.NotNull;
-import org.moussaud.tanzu.tapoperator.controller.tanzusync.TanzuSyncResource;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +30,11 @@ public abstract class BaseResource<R extends HasMetadata> extends CRUDKubernetes
         setResourceDiscriminator(new Discriminator(component));
     }
 
+    @Override
+    public String getComponent() {
+        return component;
+    }
+
     class Discriminator
             extends ResourceIDMatcherDiscriminator<R, TapResource> {
         public Discriminator(String component) {
@@ -38,9 +42,6 @@ public abstract class BaseResource<R extends HasMetadata> extends CRUDKubernetes
         }
     }
 
-    public String name(TapResource primary) {
-        return "%s-%s".formatted(primary.getMetadata().getName(), component);
-    }
 
     protected ObjectMetaBuilder createMeta(TapResource primary) {
         return new ObjectMetaBuilder()
@@ -51,7 +52,7 @@ public abstract class BaseResource<R extends HasMetadata> extends CRUDKubernetes
                 .addToLabels(K8S_MANAGED_BY, K8S_OWNER);
     }
 
-    protected String namespace(TapResource primary) {
+    public String namespace(TapResource primary) {
         return primary.getMetadata().getNamespace();
     }
 

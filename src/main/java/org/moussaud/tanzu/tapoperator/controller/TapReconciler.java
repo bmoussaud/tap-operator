@@ -2,7 +2,6 @@ package org.moussaud.tanzu.tapoperator.controller;
 
 import io.javaoperatorsdk.operator.api.reconciler.*;
 import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
-import org.moussaud.tanzu.tapoperator.controller.tanzusync.*;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 
 @ControllerConfiguration(dependents = {
+
         @Dependent(name = SecretResource.COMPONENT, type = SecretResource.class),
 
         @Dependent(name = JobEssentialBundleCopyResource.COMPONENT,
@@ -28,19 +28,20 @@ import java.time.Duration;
                 dependsOn = SecretResource.COMPONENT,
                 type = JobPostgresCopyResource.class,
                 readyPostcondition = JobReadyCondition.class),
-        @Dependent(name = NamespaceResource.COMPONENT, type = NamespaceResource.class,
+        @Dependent(name = ServiceAccountResource.COMPONENT, type = ServiceAccountResource.class,
                 dependsOn = {JobEssentialBundleDeployResource.COMPONENT, JobTapCopyResource.COMPONENT, JobPostgresCopyResource.COMPONENT}
         ),
-        @Dependent(name = ServiceAccountResource.COMPONENT, dependsOn = NamespaceResource.COMPONENT, type = ServiceAccountResource.class),
-        @Dependent(name = ClusterRoleResource.COMPONENT, type = ClusterRoleResource.class),
-        @Dependent(name = ClusterRoleBindingResource.COMPONENT, type = ClusterRoleBindingResource.class),
-        @Dependent(name = SecretExportResource.COMPONENT, type = SecretExportResource.class, dependsOn = NamespaceResource.COMPONENT),
-        @Dependent(name = SecretInstallRegistryDockerConfigResource.COMPONENT + "-sec", type = SecretInstallRegistryDockerConfigResource.class, dependsOn = NamespaceResource.COMPONENT),
-        @Dependent(name = SecretSyncAgeIdentityResource.COMPONENT, type = SecretSyncAgeIdentityResource.class, dependsOn = NamespaceResource.COMPONENT),
-        @Dependent(name = SecretSyncGitResource.COMPONENT, type = SecretSyncGitResource.class, dependsOn = NamespaceResource.COMPONENT),
+        @Dependent(name = ClusterRoleResourceCluster.COMPONENT, type = ClusterRoleResourceCluster.class),
+        @Dependent(name = ClusterRoleBindingResourceCluster.COMPONENT, type = ClusterRoleBindingResourceCluster.class),
+        @Dependent(name = SecretExportResource.COMPONENT, type = SecretExportResource.class, dependsOn = ServiceAccountResource.COMPONENT),
+        @Dependent(name = SecretInstallRegistryDockerConfigResource.COMPONENT + "-sec", type = SecretInstallRegistryDockerConfigResource.class),
+        @Dependent(name = SecretSyncAgeIdentityResource.COMPONENT, type = SecretSyncAgeIdentityResource.class),
+        @Dependent(name = SecretSyncGitResource.COMPONENT, type = SecretSyncGitResource.class),
         @Dependent(name = AppResource.COMPONENT, type = AppResource.class,
-                dependsOn = {ServiceAccountResource.COMPONENT, SecretSyncGitResource.COMPONENT, SecretSyncAgeIdentityResource.COMPONENT, SecretInstallRegistryDockerConfigResource.COMPONENT + "-sec", SecretExportResource.COMPONENT, ClusterRoleBindingResource.COMPONENT, ClusterRoleResource.COMPONENT},
-                readyPostcondition = AppReadyCondition.class, deletePostcondition = AppDeleteCondition.class)
+                dependsOn = {ServiceAccountResource.COMPONENT, SecretSyncGitResource.COMPONENT, SecretSyncAgeIdentityResource.COMPONENT, SecretInstallRegistryDockerConfigResource.COMPONENT + "-sec", SecretExportResource.COMPONENT, ClusterRoleBindingResourceCluster.COMPONENT, ClusterRoleResourceCluster.COMPONENT},
+                readyPostcondition = AppReadyCondition.class,
+                deletePostcondition = AppDeleteCondition.class)
+
 })
 public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResource> {
 

@@ -1,14 +1,13 @@
-package org.moussaud.tanzu.tapoperator.controller.tanzusync;
+package org.moussaud.tanzu.tapoperator.controller;
 
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretBuilder;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
-import org.moussaud.tanzu.tapoperator.controller.Utils;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SecretSyncGitResource extends TanzuSyncResource<Secret> {
+public class SecretSyncGitResource extends BaseResource<Secret> {
 
     public static final String COMPONENT = "sync-git";
 
@@ -20,6 +19,7 @@ public class SecretSyncGitResource extends TanzuSyncResource<Secret> {
 
     @Override
     protected Secret desired(TapResource primary, Context<TapResource> context) {
+        log.info("Desired {} {}", name(primary), resourceType());
         var secret = getSecret(primary, context);
         var result = Utils.getSyncGit(secret.getData());
         if (result.containsKey("ssh-privatekey") && !result.containsKey("ssh-knownhosts")) {

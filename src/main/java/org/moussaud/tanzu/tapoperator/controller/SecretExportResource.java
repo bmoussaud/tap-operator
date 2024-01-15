@@ -1,13 +1,14 @@
-package org.moussaud.tanzu.tapoperator.controller.tanzusync;
+package org.moussaud.tanzu.tapoperator.controller;
 
 import io.javaoperatorsdk.operator.api.reconciler.Context;
 import dev.carvel.secretgen.v1alpha1.*;
 
 import java.util.Collections;
 
+import org.moussaud.tanzu.tapoperator.controller.BaseResource;
 import org.moussaud.tanzu.tapoperator.resource.*;
 
-public class SecretExportResource extends TanzuSyncResource<SecretExport> {
+public class SecretExportResource extends BaseResource<SecretExport> {
     public static final String COMPONENT = "install-registry-dockerconfig";
 
     public SecretExportResource() {

@@ -1,4 +1,4 @@
-package org.moussaud.tanzu.tapoperator.controller.tanzusync;
+package org.moussaud.tanzu.tapoperator.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;

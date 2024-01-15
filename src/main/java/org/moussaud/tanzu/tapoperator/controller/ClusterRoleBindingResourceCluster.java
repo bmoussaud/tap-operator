@@ -1,14 +1,15 @@
-package org.moussaud.tanzu.tapoperator.controller.tanzusync;
+package org.moussaud.tanzu.tapoperator.controller;
 
+import io.fabric8.kubernetes.api.model.rbac.ClusterRoleBinding;
+import io.fabric8.kubernetes.api.model.rbac.ClusterRoleBindingBuilder;
+import io.fabric8.kubernetes.api.model.rbac.SubjectBuilder;
+import io.javaoperatorsdk.operator.api.reconciler.Context;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 
-import io.javaoperatorsdk.operator.api.reconciler.Context;
-import io.fabric8.kubernetes.api.model.rbac.*;
-
-public class ClusterRoleBindingResource extends TanzuSyncResource<ClusterRoleBinding> {
+public class ClusterRoleBindingResourceCluster extends ClusterBaseResource<ClusterRoleBinding> {
     public static final String COMPONENT = "tanzu-sync-cluster-crb-admin";
 
-    public ClusterRoleBindingResource() {
+    public ClusterRoleBindingResourceCluster() {
         super(ClusterRoleBinding.class, COMPONENT);
     }
 
@@ -18,11 +19,11 @@ public class ClusterRoleBindingResource extends TanzuSyncResource<ClusterRoleBin
         return new ClusterRoleBindingBuilder()
                 .withMetadata(createMeta(primary).build())
                 .withNewRoleRef("rbac.authorization.k8s.io", "ClusterRole",
-                        ClusterRoleResource.COMPONENT)
+                        ClusterRoleResourceCluster.COMPONENT)
                 .withSubjects(
                         new SubjectBuilder()
-                                .withName(ServiceAccountResource.COMPONENT)
-                                .withNamespace(NamespaceResource.COMPONENT)
+                                .withName(new ServiceAccountResource().name(primary))
+                                .withNamespace(new ServiceAccountResource().namespace(primary))
                                 .withKind("ServiceAccount")
                                 .build())
 

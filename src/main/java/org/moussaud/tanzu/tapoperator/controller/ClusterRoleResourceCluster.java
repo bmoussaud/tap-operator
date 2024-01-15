@@ -1,16 +1,15 @@
-package org.moussaud.tanzu.tapoperator.controller.tanzusync;
-
-import org.moussaud.tanzu.tapoperator.resource.TapResource;
+package org.moussaud.tanzu.tapoperator.controller;
 
 import io.fabric8.kubernetes.api.model.rbac.ClusterRole;
 import io.fabric8.kubernetes.api.model.rbac.ClusterRoleBuilder;
 import io.fabric8.kubernetes.api.model.rbac.PolicyRuleBuilder;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
+import org.moussaud.tanzu.tapoperator.resource.TapResource;
 
-public class ClusterRoleResource extends TanzuSyncResource<ClusterRole> {
+public class ClusterRoleResourceCluster extends ClusterBaseResource<ClusterRole> {
     public static final String COMPONENT = "tanzu-sync-cluster-admin";
 
-    public ClusterRoleResource() {
+    public ClusterRoleResourceCluster() {
         super(ClusterRole.class, COMPONENT);
     }
 
