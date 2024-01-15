@@ -1,17 +1,16 @@
 package org.moussaud.tanzu.tapoperator.controller;
 
+import dev.carvel.secretgen.v1alpha1.SecretExport;
+import dev.carvel.secretgen.v1alpha1.SecretExportSpec;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
-import dev.carvel.secretgen.v1alpha1.*;
+import org.moussaud.tanzu.tapoperator.resource.TapResource;
 
 import java.util.Collections;
 
-import org.moussaud.tanzu.tapoperator.controller.BaseResource;
-import org.moussaud.tanzu.tapoperator.resource.*;
+public class SecretExportAgeKeyResource extends BaseResource<SecretExport> {
+    public static final String COMPONENT = "sync-age-identity";
 
-public class SecretExportResource extends BaseResource<SecretExport> {
-    public static final String COMPONENT = "install-registry-dockerconfig";
-
-    public SecretExportResource() {
+    public SecretExportAgeKeyResource() {
         super(SecretExport.class, COMPONENT);
     }
 

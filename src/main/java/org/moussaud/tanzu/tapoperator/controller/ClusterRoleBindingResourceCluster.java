@@ -26,7 +26,6 @@ public class ClusterRoleBindingResourceCluster extends ClusterBaseResource<Clust
                                 .withNamespace(new ServiceAccountResource().namespace(primary))
                                 .withKind("ServiceAccount")
                                 .build())
-
                 .build();
     }
 
