@@ -104,7 +104,9 @@ metadata:
 data:
   values.yaml: |
     ---
-    tap_version: 1.7.0 
+    tap_install:
+      values:
+        tap_version: 1.7.0
 ```
 
-The deployed TAP configuration can use ` #@ data.values.tap_version` to manage the version
+The deployed TAP configuration can use ` #@ data.values.tap_install.values.tap_version` to manage the version
