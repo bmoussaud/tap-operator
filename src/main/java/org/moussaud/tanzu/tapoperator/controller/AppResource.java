@@ -14,14 +14,16 @@ import io.k14s.kappctrl.v1alpha1.appspec.template.Ytt;
 import io.k14s.kappctrl.v1alpha1.appspec.template.sops.Age;
 import io.k14s.kappctrl.v1alpha1.appspec.template.sops.age.PrivateKeysSecretRef;
 import io.k14s.kappctrl.v1alpha1.appspec.template.ytt.ValuesFrom;
+import io.k14s.kappctrl.v1alpha1.appspec.template.ytt.valuesfrom.ConfigMapRef;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import static java.util.List.of;
 
 public class AppResource extends BaseResource<App> {
     public static final String COMPONENT = "sync";
@@ -40,7 +42,7 @@ public class AppResource extends BaseResource<App> {
         App desired = new App();
         desired.setMetadata(createMeta(primary).build());
 
-        Map<String,String> annotations = new HashMap<>();
+        Map<String, String> annotations = new HashMap<>();
         annotations.put("kapp.k14s.io/change-group", "tanzu-sync");
         desired.getMetadata().setAnnotations(annotations);
 
@@ -68,15 +70,21 @@ public class AppResource extends BaseResource<App> {
         var template_sops = new Template();
         template_sops.setSops(sops);
 
-        var valuesFrom = new ValuesFrom();
-        valuesFrom.setPath("values");
+        var valuesFromValues = new ValuesFrom();
+        valuesFromValues.setPath("values");
+
+        var configMapRef = new ConfigMapRef();
+        configMapRef.setName(new ConfigMapVersionResource().name(primary));
+        var valuesFromCM = new ValuesFrom();
+        valuesFromCM.setConfigMapRef(configMapRef);
+
         var ytt = new Ytt();
         ytt.setPaths(Collections.singletonList("config"));
-        ytt.setValuesFrom(Collections.singletonList(valuesFrom));
+        ytt.setValuesFrom(of(valuesFromValues, valuesFromCM));
         var template_ytt = new Template();
         template_ytt.setYtt(ytt);
 
-        spec.setTemplate(List.of(template_sops, template_ytt));
+        spec.setTemplate(of(template_sops, template_ytt));
 
         var deploy = new Deploy();
         deploy.setKapp(new Kapp());

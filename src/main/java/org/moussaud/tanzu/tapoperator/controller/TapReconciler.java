@@ -11,7 +11,7 @@ import java.time.Duration;
 @ControllerConfiguration(dependents = {
 
         @Dependent(name = SecretResource.COMPONENT, type = SecretResource.class),
-
+        @Dependent(name = ConfigMapVersionResource.COMPONENT, type = ConfigMapVersionResource.class),
         @Dependent(name = JobEssentialBundleCopyResource.COMPONENT,
                 dependsOn = SecretResource.COMPONENT,
                 type = JobEssentialBundleCopyResource.class,

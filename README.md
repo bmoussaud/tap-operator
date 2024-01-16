@@ -8,7 +8,8 @@ Tanzu Application Platformm (TAP) operator manages the following task:
     * copy PostgresSQL from tanzu registry to a local registry
 * Deploy _TAP Essential_ in the cluster (kapp-control, secret-gen-control) (thanks
   @alexandreroman [tanzu-cluster-essentials-bootstrap](https://github.com/alexandreroman/tanzu-cluster-essentials-bootstrap) )
-* Deploy tap-sync to trigger the TAP Gitops installation
+* Deploy an `App` to trigger the TAP Gitops installation and all the necessary configuration
+* Generate a `ConfigMap` (inject as value in the previous App) containing the version managed by the resource.
 
 ## Installation
 
@@ -87,3 +88,23 @@ spec:
 
 if not provided the `clusterEssentialsBundleVersion` property is computed to get latest value for a given version
 the `secret` property contains the name of secret holding the image registry property.
+
+The generated config map
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: tap-version
+    app.kubernetes.io/managed-by: tap-operator
+    app.kubernetes.io/name: mytap
+  name: mytap-tap-version
+  namespace: tap-operator
+data:
+  values.yaml: |
+    ---
+    tap_version: 1.7.0 
+```
+
+The deployed TAP configuration can use ` #@ data.values.tap_version` to manage the version
