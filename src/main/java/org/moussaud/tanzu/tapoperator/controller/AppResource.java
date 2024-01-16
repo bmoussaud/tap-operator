@@ -19,7 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AppResource extends BaseResource<App> {
     public static final String COMPONENT = "sync";
@@ -37,6 +39,11 @@ public class AppResource extends BaseResource<App> {
 
         App desired = new App();
         desired.setMetadata(createMeta(primary).build());
+
+        Map<String,String> annotations = new HashMap<>();
+        annotations.put("kapp.k14s.io/change-group", "tanzu-sync");
+        desired.getMetadata().setAnnotations(annotations);
+
         AppSpec spec = new AppSpec();
         desired.setSpec(spec);
         spec.setServiceAccountName(new ServiceAccountResource().name(primary));
