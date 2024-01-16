@@ -30,10 +30,12 @@ public class ConfigMapVersionResource extends BaseResource<ConfigMap> {
     protected ConfigMap desired(TapResource primary, Context<TapResource> context) {
         log.debug("Desired {} {}", name(primary), resourceType());
         Map<String, String> data = new HashMap<>();
-        Map<String, String> content = Map.of("tap_version", primary.getSpec().getVersion());
+        var content = Map.of("tap_version", primary.getSpec().getVersion());
+        var values = Map.of("values", content);
+        var tap_install = Map.of("tap_install", values);
         String yaml = null;
         try {
-            yaml = createYamlMapper().writeValueAsString(content);
+            yaml = createYamlMapper().writeValueAsString(tap_install);
         } catch (JsonProcessingException e) {
             yaml = "ERROR when creating yaml";
         }
