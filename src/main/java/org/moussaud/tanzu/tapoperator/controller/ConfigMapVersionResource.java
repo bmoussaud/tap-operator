@@ -29,17 +29,17 @@ public class ConfigMapVersionResource extends BaseResource<ConfigMap> {
     @Override
     protected ConfigMap desired(TapResource primary, Context<TapResource> context) {
         log.debug("Desired {} {}", name(primary), resourceType());
-        Map<String, String> data = new HashMap<>();
-        var content = Map.of("tap_version", primary.getSpec().getVersion());
-        var values = Map.of("values", content);
-        var tap_install = Map.of("tap_install", values);
-        String yaml = null;
+        var data = new HashMap<String, String>();
+        var tap_install_values = Map.of("tap_operator", Map.of("tap_version", primary.getSpec().getVersion()));
+        var tap_install_schema = Map.of("tap_operator", Map.of("tap_version", "x"));
         try {
-            yaml = createYamlMapper().writeValueAsString(tap_install);
+            var schemaYamlMapper = createYamlMapper();
+            data.put("schema.yaml", "#@data/values-schema\n" + schemaYamlMapper.writeValueAsString(tap_install_schema));
+            data.put("values.yaml", schemaYamlMapper.writeValueAsString(tap_install_values));
         } catch (JsonProcessingException e) {
-            yaml = "ERROR when creating yaml";
+            log.error("JsonProcessingException ", e);
         }
-        data.put("values.yaml", yaml);
+
         return new ConfigMapBuilder()
                 .withMetadata(createMeta(primary).build())
                 .withData(data)
@@ -48,8 +48,8 @@ public class ConfigMapVersionResource extends BaseResource<ConfigMap> {
 
     public static ObjectMapper createYamlMapper() {
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory()
-                .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
-                .configure(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS, true)
+               // .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
+                //.configure(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS, true)
                 .configure(YAMLGenerator.Feature.USE_NATIVE_OBJECT_ID, false)
                 .configure(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID, false)
         );
