@@ -1,0 +1,4 @@
+#@data/values
+---
+tap_operator:
+  tap_version: "1.7.x"

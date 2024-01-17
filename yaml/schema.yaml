@@ -1,0 +1,7 @@
+#@data/values-schema
+#@overlay/match-child-defaults missing_ok=True
+---
+#@schema/title "TAP Operator Configuration"
+tap_operator:
+  #@schema/title "TAP Version"
+  tap_version: ""

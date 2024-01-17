@@ -34,7 +34,7 @@ public class ConfigMapVersionResource extends BaseResource<ConfigMap> {
         var tap_install_schema = Map.of("tap_operator", Map.of("tap_version", "x"));
         try {
             var schemaYamlMapper = createYamlMapper();
-            //data.put("schema.yaml", "#@data/values-schema\n" + schemaYamlMapper.writeValueAsString(tap_install_schema));
+            data.put("schema.yaml", "#@data/values-schema\n" + schemaYamlMapper.writeValueAsString(tap_install_schema));
             data.put("values.yaml", schemaYamlMapper.writeValueAsString(tap_install_values));
         } catch (JsonProcessingException e) {
             log.error("JsonProcessingException ", e);
@@ -48,8 +48,8 @@ public class ConfigMapVersionResource extends BaseResource<ConfigMap> {
 
     public static ObjectMapper createYamlMapper() {
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory()
-               // .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
-                //.configure(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS, true)
+                .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
+                .configure(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS, true)
                 .configure(YAMLGenerator.Feature.USE_NATIVE_OBJECT_ID, false)
                 .configure(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID, false)
         );

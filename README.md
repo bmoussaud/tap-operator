@@ -101,12 +101,12 @@ metadata:
     app.kubernetes.io/name: mytap
   name: mytap-tap-version
   namespace: tap-operator
+apiVersion: v1
 data:
   values.yaml: |
     ---
-    tap_install:
-      values:
-        tap_version: 1.7.0
+    tap_operator:
+      tap_version: "1.8.0-build.68"
 ```
 
 The deployed TAP configuration can use ` #@ data.values.tap_install.values.tap_version` to manage the version
