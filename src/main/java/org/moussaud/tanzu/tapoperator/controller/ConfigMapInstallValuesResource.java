@@ -11,13 +11,13 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ConfigMapVersionResource extends BaseResource<ConfigMap> {
+public class ConfigMapInstallValuesResource extends BaseResource<ConfigMap> {
 
     public static final String COMPONENT = "tap-install-values";
 
     private static final Logger log = LoggerFactory.getLogger(SecretResource.class);
 
-    public ConfigMapVersionResource() {
+    public ConfigMapInstallValuesResource() {
         super(ConfigMap.class, COMPONENT);
     }
 

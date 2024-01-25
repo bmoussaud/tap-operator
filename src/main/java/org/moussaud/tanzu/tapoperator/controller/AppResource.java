@@ -14,6 +14,7 @@ import io.k14s.kappctrl.v1alpha1.appspec.template.Ytt;
 import io.k14s.kappctrl.v1alpha1.appspec.template.sops.Age;
 import io.k14s.kappctrl.v1alpha1.appspec.template.sops.age.PrivateKeysSecretRef;
 import io.k14s.kappctrl.v1alpha1.appspec.template.ytt.ValuesFrom;
+import io.k14s.kappctrl.v1alpha1.appspec.template.ytt.valuesfrom.ConfigMapRef;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,14 +73,19 @@ public class AppResource extends BaseResource<App> {
         var valuesFromValues = new ValuesFrom();
         valuesFromValues.setPath("values");
 
-        //var configMapRef = new ConfigMapRef();
-        //configMapRef.setName(new ConfigMapVersionResource().name(primary));
-        //var valuesFromCM = new ValuesFrom();
-        //valuesFromCM.setConfigMapRef(configMapRef);
+        var configMapRef = new ConfigMapRef();
+        configMapRef.setName(new ConfigMapInstallValuesResource().name(primary));
+        var valuesFromCM = new ValuesFrom();
+        valuesFromCM.setConfigMapRef(configMapRef);
+
+        var secretRef = new io.k14s.kappctrl.v1alpha1.appspec.template.ytt.valuesfrom.SecretRef();
+        secretRef.setName(new SecretTapSensitiveImageRegistryResource().name(primary));
+        var valuesFromSecret = new ValuesFrom();
+        valuesFromSecret.setSecretRef(secretRef);
 
         var ytt = new Ytt();
         ytt.setPaths(Collections.singletonList("config"));
-        ytt.setValuesFrom(of(valuesFromValues/*, valuesFromCM*/));
+        ytt.setValuesFrom(of(valuesFromValues, valuesFromCM, valuesFromSecret));
         var template_ytt = new Template();
         template_ytt.setYtt(ytt);
 
