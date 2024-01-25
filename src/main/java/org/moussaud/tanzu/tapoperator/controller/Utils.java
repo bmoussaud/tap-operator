@@ -45,9 +45,10 @@ public class Utils {
     }
 
     public static Map<String, String> getDockerConfigJsonTarget(Map<String, String> data) {
-        DockerConfigEntry entry = new DockerConfigEntry(decode(data.get("TO_REGISTRY_USERNAME")), decode(data.get("TO_REGISTRY_PASSWORD")));
+        var to = getTargetRegistry(data);
+        DockerConfigEntry entry = new DockerConfigEntry(to.get("TO_REGISTRY_USERNAME"), to.get("TO_REGISTRY_PASSWORD"));
         DockerConfig target = new DockerConfig();
-        target.add(decode(data.get("TO_REGISTRY_HOSTNAME")), entry);
+        target.add(to.get("TO_REGISTRY_HOSTNAME"), entry);
 
         ObjectMapper mapper = new ObjectMapper();
         StringWriter stringEmp = new StringWriter();
@@ -59,6 +60,14 @@ public class Utils {
         data = new HashMap<>();
         data.put(".dockerconfigjson", encode(stringEmp.toString()));
         return data;
+    }
+
+    public static Map<String, String> getTargetRegistry(Map<String, String> data) {
+        Map<String, String> result = new HashMap<>();
+        result.put("TO_REGISTRY_HOSTNAME", decode(data.get("TO_REGISTRY_HOSTNAME")));
+        result.put("TO_REGISTRY_PASSWORD", decode(data.get("TO_REGISTRY_PASSWORD")));
+        result.put("TO_REGISTRY_USERNAME", decode(data.get("TO_REGISTRY_USERNAME")));
+        return result;
     }
 
     public static Map<String, String> getAgeSecretKey(Map<String, String> data) {

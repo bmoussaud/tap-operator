@@ -1,11 +1,6 @@
 package org.moussaud.tanzu.tapoperator.controller;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
@@ -18,7 +13,7 @@ import java.util.Map;
 
 public class ConfigMapVersionResource extends BaseResource<ConfigMap> {
 
-    public static final String COMPONENT = "tap-version";
+    public static final String COMPONENT = "tap-install-values";
 
     private static final Logger log = LoggerFactory.getLogger(SecretResource.class);
 
@@ -30,32 +25,28 @@ public class ConfigMapVersionResource extends BaseResource<ConfigMap> {
     protected ConfigMap desired(TapResource primary, Context<TapResource> context) {
         log.debug("Desired {} {}", name(primary), resourceType());
         var data = new HashMap<String, String>();
-        var tap_install_values = Map.of("tap_operator", Map.of("tap_version", primary.getSpec().getVersion()));
-        var tap_install_schema = Map.of("tap_operator", Map.of("tap_version", "x"));
+
         try {
-            var schemaYamlMapper = createYamlMapper();
-            data.put("schema.yaml", "#@data/values-schema\n" + schemaYamlMapper.writeValueAsString(tap_install_schema));
-            data.put("values.yaml", schemaYamlMapper.writeValueAsString(tap_install_values));
+            data.put("tap-operator-tap-install-values.yaml", createYamlMapper().writeValueAsString(buildData(primary, context)));
         } catch (JsonProcessingException e) {
             log.error("JsonProcessingException ", e);
         }
-
         return new ConfigMapBuilder()
                 .withMetadata(createMeta(primary).build())
                 .withData(data)
                 .build();
     }
 
-    public static ObjectMapper createYamlMapper() {
-        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory()
-                .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
-                .configure(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS, true)
-                .configure(YAMLGenerator.Feature.USE_NATIVE_OBJECT_ID, false)
-                .configure(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID, false)
+    private Map<String, Object> buildData(TapResource resource, Context<TapResource> context) {
+        var secret = getSecret(resource, context);
+        var to = Utils.getTargetRegistry(secret.getData());
+        var ociRepository = Map.of("oci_repository", String.format("%s/%s", to.get("TO_REGISTRY_HOSTNAME"), JobTapCopyResource.TAP_PACKAGES));
+        return Map.of("tap_install", Map.of("version", Map.of(
+                        "package_repo_bundle_tag", resource.getSpec().getVersion(),
+                        "package_version", resource.getSpec().getVersion()),
+                "package_repository", ociRepository)
         );
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY).
-                enable(SerializationFeature.INDENT_OUTPUT);
-        return objectMapper;
-
     }
+
+
 }

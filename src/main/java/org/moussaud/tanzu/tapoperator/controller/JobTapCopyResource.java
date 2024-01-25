@@ -11,6 +11,7 @@ import java.util.List;
 public class JobTapCopyResource extends BaseJobResource {
 
     public static final String COMPONENT = "tap-copy";
+    public static final String TAP_PACKAGES = "tanzu-application-platform/tap-packages";
 
     public JobTapCopyResource() {
         super(Job.class, COMPONENT);
@@ -19,13 +20,14 @@ public class JobTapCopyResource extends BaseJobResource {
     @Override
     protected List<Container> getContainer(TapResource primary) {
         var image = "ghcr.io/bmoussaud/tap-operator-copy-packages:v0.0.3";
+
         final Container copy_essentials = new ContainerBuilder()
                 .withName(COMPONENT)
                 .withImage(image)
                 .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
                 .withEnv(Arrays.asList(
                         new EnvVar("PACKAGE",
-                                "tanzu-application-platform/tap-packages",
+                                TAP_PACKAGES,
                                 null),
                         new EnvVar("VERSION", primary.getSpec().getVersion(),
                                 null)))

@@ -1,5 +1,10 @@
 package org.moussaud.tanzu.tapoperator.controller;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import io.fabric8.kubernetes.api.model.Secret;
@@ -68,6 +73,19 @@ public abstract class BaseResource<R extends HasMetadata> extends CRUDKubernetes
                     secretName, resource.getMetadata().getNamespace()));
         }
         return secret;
+    }
+
+    public ObjectMapper createYamlMapper() {
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory()
+                .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
+                .configure(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS, true)
+                .configure(YAMLGenerator.Feature.USE_NATIVE_OBJECT_ID, false)
+                .configure(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID, false)
+        );
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY).
+                enable(SerializationFeature.INDENT_OUTPUT);
+        return objectMapper;
+
     }
 
 }
