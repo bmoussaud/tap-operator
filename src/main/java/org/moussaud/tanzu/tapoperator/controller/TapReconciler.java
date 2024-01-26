@@ -12,7 +12,7 @@ import java.time.Duration;
 
         @Dependent(name = SecretResource.COMPONENT, type = SecretResource.class),
         @Dependent(name = ConfigMapInstallValuesResource.COMPONENT, type = ConfigMapInstallValuesResource.class),
-        /*
+
         @Dependent(name = JobEssentialBundleCopyResource.COMPONENT,
                 dependsOn = SecretResource.COMPONENT,
                 type = JobEssentialBundleCopyResource.class,
@@ -29,9 +29,9 @@ import java.time.Duration;
                 dependsOn = SecretResource.COMPONENT,
                 type = JobPostgresCopyResource.class,
                 readyPostcondition = JobReadyCondition.class),
-         */
+
         @Dependent(name = ServiceAccountResource.COMPONENT, type = ServiceAccountResource.class
-                //dependsOn = {JobEssentialBundleDeployResource.COMPONENT, JobTapCopyResource.COMPONENT, JobPostgresCopyResource.COMPONENT}
+                , dependsOn = {JobEssentialBundleDeployResource.COMPONENT, JobTapCopyResource.COMPONENT, JobPostgresCopyResource.COMPONENT}
         ),
         @Dependent(name = ClusterRoleResourceCluster.COMPONENT, type = ClusterRoleResourceCluster.class),
         @Dependent(name = ClusterRoleBindingResourceCluster.COMPONENT, type = ClusterRoleBindingResourceCluster.class),
