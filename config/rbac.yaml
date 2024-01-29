@@ -9,9 +9,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: tap-operator-role
 rules:
-  - apiGroups: ["*"]
-    resources: ["*"]
-    verbs: ["*"]
+  - apiGroups: [ "*" ]
+    resources: [ "*" ]
+    verbs: [ "*" ]
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -21,6 +21,19 @@ subjects:
   - kind: ServiceAccount
     name: tap-operator
     namespace: tap-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tap-operator-role
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tap-operator-essential-bundle-deploy-role-binding
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: tanzu-sync
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

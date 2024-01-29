@@ -13,7 +13,6 @@ build-and-push-image:  check-carvel
 	rm -f _copy_packages.yaml 
 	
 deploy: build-and-push-image  gen_registry_secrets
-	kubectl apply -f out/copy_packages
 
 undeploy:
 	kubectl delete -f out/copy_packages
@@ -36,9 +35,6 @@ deploy-crd:
 
 deploy-config: gen_registry_secrets
 	kubectl apply -f config
-
-deploy-local-config: gen_registry_secrets
-	kubectl apply -f config/namespace.yaml -f config/rbac.yaml -f out/copy_packages/registry-secrets.yaml
 
 deploy-spec: deploy-crd
 	kubectl apply -f src/test/resources/test-tap-operator.yaml
@@ -76,5 +72,13 @@ delete-tanzu-sync:
 	kubectl delete ns tanzu-sync
 
 k8s_deploy_operator: deploy-crd deploy-config
+
+new-kind-cluster:
+	kind create cluster --name tap-operator
+	kind get kubeconfig --name tap-operator  > ~/.kube/config-files/kubeconfig-kind-tap-operator.yaml
+
+delete-kind-cluster:
+	kind delete cluster --name tap-operator
+
 
 

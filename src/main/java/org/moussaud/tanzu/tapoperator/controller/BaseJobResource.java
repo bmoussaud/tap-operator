@@ -7,8 +7,6 @@ import io.fabric8.kubernetes.api.model.batch.v1.Job;
 import io.fabric8.kubernetes.api.model.batch.v1.JobBuilder;
 import io.fabric8.kubernetes.api.model.batch.v1.JobSpecBuilder;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
-import io.javaoperatorsdk.operator.api.reconciler.ResourceIDMatcherDiscriminator;
-import io.javaoperatorsdk.operator.processing.event.ResourceID;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +39,7 @@ public abstract class BaseJobResource extends BaseResource<Job> {
                         .withTemplate(new PodTemplateSpecBuilder()
                                 .withSpec(new PodSpecBuilder()
                                         .withRestartPolicy("Never")
-                                        .withServiceAccount(
-                                                "tap-operator")
+                                        .withServiceAccount(new ServiceAccountResource().name(primary))
                                         .withContainers(getContainer(primary))
                                         .build())
                                 .build())

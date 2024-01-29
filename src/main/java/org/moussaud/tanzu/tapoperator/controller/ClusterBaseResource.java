@@ -25,6 +25,10 @@ public class ClusterBaseResource<R extends HasMetadata> extends KubernetesDepend
         return component;
     }
 
+    public String namespace(TapResource primary) {
+        return primary.getMetadata().getNamespace();
+    }
+
 
     @Override
     public String getComponent() {
