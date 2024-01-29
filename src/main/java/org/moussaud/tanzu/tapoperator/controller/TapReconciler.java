@@ -11,7 +11,7 @@ import java.time.Duration;
 @ControllerConfiguration(dependents = {
 
         @Dependent(name = SecretResource.COMPONENT, type = SecretResource.class),
-        @Dependent(name = ConfigMapInstallValuesResource.COMPONENT, type = ConfigMapInstallValuesResource.class),
+        @Dependent(type = ConfigMapInstallValuesResource.class),
         @Dependent(name = ServiceAccountResource.COMPONENT, type = ServiceAccountResource.class),
         @Dependent(name = ClusterRoleResourceCluster.COMPONENT, type = ClusterRoleResourceCluster.class),
         @Dependent(name = ClusterRoleBindingResourceCluster.COMPONENT, type = ClusterRoleBindingResourceCluster.class),
@@ -40,12 +40,11 @@ import java.time.Duration;
         @Dependent(name = SecretSyncGitResource.COMPONENT, type = SecretSyncGitResource.class),
         @Dependent(name = SecretTapSensitiveImageRegistryResource.COMPONENT, type = SecretTapSensitiveImageRegistryResource.class),
         @Dependent(name = AppResource.COMPONENT, type = AppResource.class,
-                dependsOn = {ServiceAccountResource.COMPONENT,
-                        SecretSyncAgeIdentityResource.COMPONENT,
-                        SecretSyncGitResource.COMPONENT,
-                        SecretInstallRegistryDockerConfigResource.COMPONENT,
-                        ClusterRoleResourceCluster.COMPONENT, ClusterRoleBindingResourceCluster.COMPONENT,
-                        JobEssentialBundleDeployResource.COMPONENT, JobTapCopyResource.COMPONENT},
+                dependsOn = {
+                        JobEssentialBundleCopyResource.COMPONENT,
+                        JobEssentialBundleDeployResource.COMPONENT,
+                        JobPostgresCopyResource.COMPONENT,
+                        JobTapCopyResource.COMPONENT},
                 readyPostcondition = AppReadyCondition.class,
                 deletePostcondition = AppDeleteCondition.class)
 
@@ -54,9 +53,11 @@ public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResour
 
     private static final Logger log = LoggerFactory.getLogger(TapReconciler.class);
 
+
     @Override
     public UpdateControl<TapResource> reconcile(TapResource resource, Context<TapResource> context) throws Exception {
         log.debug("Reconciling: {}/{}", resource.getMetadata().getName(), resource.getSpec().getVersion());
+
         var ready = context
                 .managedDependentResourceContext()
                 .getWorkflowReconcileResult()
@@ -65,7 +66,7 @@ public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResour
         resource.getStatus().setReady(ready);
         log.debug("{}", resource.getStatus());
         if (resource.getStatus().getReady()) {
-            log.debug("Ready !");
+            log.info("Ready !");
             return UpdateControl.noUpdate();
         }
         return UpdateControl.updateStatus(resource).rescheduleAfter(Duration.ofSeconds(10));
