@@ -37,7 +37,7 @@ public class AppResource extends BaseResource<App> {
     @Override
     protected App desired(TapResource primary, Context<TapResource> context) {
 
-        log.info("Desired {} {}", name(primary), resourceType());
+        log.debug("Desired {} {}", name(primary), resourceType());
 
         App desired = new App();
         desired.setMetadata(createMeta(primary).build());

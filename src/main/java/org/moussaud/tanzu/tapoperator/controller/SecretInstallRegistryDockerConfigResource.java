@@ -19,7 +19,7 @@ public class SecretInstallRegistryDockerConfigResource extends BaseResource<Secr
 
     @Override
     protected Secret desired(TapResource primary, Context<TapResource> context) {
-        log.info("Desired {} {}", name(primary), resourceType());
+        log.debug("Desired {} {}", name(primary), resourceType());
         var secret = getSecret(primary, context);
         return new SecretBuilder()
                 .withMetadata(createMeta(primary).build())

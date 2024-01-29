@@ -23,7 +23,7 @@ public class SecretTapSensitiveImageRegistryResource extends BaseResource<Secret
 
     @Override
     protected Secret desired(TapResource primary, Context<TapResource> context) {
-        log.info("Desired {} {}", name(primary), resourceType());
+        log.debug("Desired {} {}", name(primary), resourceType());
         var data = new HashMap<String, String>();
         var schemaYamlMapper = createYamlMapper();
         try {

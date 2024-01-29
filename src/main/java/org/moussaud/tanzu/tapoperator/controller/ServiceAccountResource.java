@@ -18,7 +18,7 @@ public class ServiceAccountResource extends BaseResource<ServiceAccount> {
 
     @Override
     protected ServiceAccount desired(TapResource primary, Context<TapResource> context) {
-        log.info("Desired {} {}", name(primary), resourceType());
+        log.debug("Desired {} {}", name(primary), resourceType());
         return new ServiceAccountBuilder()
                 .withMetadata(createMeta(primary).build())
                 .build();

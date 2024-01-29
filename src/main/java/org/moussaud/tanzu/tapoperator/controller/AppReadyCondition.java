@@ -16,7 +16,7 @@ public class AppReadyCondition implements Condition<App, TapResource> {
         return dependentResource.getSecondaryResource(primary, context).map(app -> {
             var runningapp = context.getClient().resource(app).get();
             var running = !(runningapp == null);
-            log.info("is '{}' App running ? {}", app.getMetadata().getName(), running);
+            log.debug("is '{}' App running ? {}", app.getMetadata().getName(), running);
             return running;
         }).orElse(false);
     }

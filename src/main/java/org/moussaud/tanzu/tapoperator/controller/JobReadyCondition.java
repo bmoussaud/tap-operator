@@ -24,11 +24,11 @@ public class JobReadyCondition implements Condition<Job, TapResource> {
                             .inNamespace(primary.getMetadata().getNamespace())
                             .withName(tomr.name(primary)).get();
                     if (runningJob == null) {
-                        log.info("Running {} job not found, job's gone or wrong search !",
+                        log.warn("Running {} job not found, job's gone or wrong search !",
                                 primary.getMetadata().getName());
                         return false;
                     }
-                    log.info("isMet:{} runningJob: {} Status: {} ? ", primary.getMetadata().getName(), tomr.name(primary), runningJob.getStatus());
+                    log.debug("isMet:{} runningJob: {} Status: {} ? ", primary.getMetadata().getName(), tomr.name(primary), runningJob.getStatus());
                     var succeeded = runningJob.getStatus().getSucceeded();
                     return succeeded != null && succeeded > 0;
                 })

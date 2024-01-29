@@ -16,7 +16,7 @@ public class AppDeleteCondition implements Condition<App, TapResource> {
         return dependentResource.getSecondaryResource(primary, context).map(app -> {
             var runningapp = context.getClient().resource(app).get();
             var deleted = (runningapp == null);
-            log.info("is '{}' App deleted ? {}", app.getMetadata().getName(), deleted);
+            log.debug("is '{}' App deleted ? {}", app.getMetadata().getName(), deleted);
             return deleted;
         }).orElse(true);
     }
