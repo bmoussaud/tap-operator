@@ -2,7 +2,6 @@ package org.moussaud.tanzu.tapoperator.controller;
 
 import io.javaoperatorsdk.operator.api.reconciler.*;
 import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
-import io.javaoperatorsdk.operator.processing.dependent.workflow.AbstractWorkflowExecutor;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,17 +63,15 @@ public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResour
 
     @Override
     public UpdateControl<TapResource> reconcile(TapResource resource, Context<TapResource> context) throws Exception {
-        log.debug("Reconciling: {}/{}", resource.getMetadata().getName(), resource.getSpec().getVersion());
-        AbstractWorkflowExecutor x;
         var ready = context
                 .managedDependentResourceContext()
                 .getWorkflowReconcileResult()
                 .orElseThrow()
                 .allDependentResourcesReady();
         resource.getStatus().setReady(ready);
-        log.debug("{}", resource.getStatus());
+        log.info("Reconciling: {}/{} ready:{}", resource.getMetadata().getName(), resource.getSpec().getVersion(), ready);
         if (resource.getStatus().getReady()) {
-            log.info("Resource {}/{} is ready", resource.getMetadata().getName(), resource.getSpec().getVersion());
+            log.info("Resource {}/{} done", resource.getMetadata().getName(), resource.getSpec().getVersion());
             return UpdateControl.noUpdate();
         }
         return UpdateControl.updateStatus(resource).rescheduleAfter(Duration.ofSeconds(10));
