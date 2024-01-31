@@ -2,13 +2,13 @@ package org.moussaud.tanzu.tapoperator.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.logging.log4j.util.Base64Util;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -141,13 +141,7 @@ public class Utils {
     }
 
     private static String encode(String s) {
-        try {
-            return Base64.getEncoder().encodeToString(s.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return "X";
-        }
+        return Base64Util.encode(s);
     }
 
 

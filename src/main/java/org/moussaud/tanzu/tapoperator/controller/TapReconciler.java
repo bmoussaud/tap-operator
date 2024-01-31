@@ -2,6 +2,7 @@ package org.moussaud.tanzu.tapoperator.controller;
 
 import io.javaoperatorsdk.operator.api.reconciler.*;
 import io.javaoperatorsdk.operator.api.reconciler.dependent.Dependent;
+import io.javaoperatorsdk.operator.processing.dependent.workflow.AbstractWorkflowExecutor;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,7 @@ import java.time.Duration;
 @ControllerConfiguration(dependents = {
 
         @Dependent(name = SecretResource.COMPONENT, type = SecretResource.class),
-        @Dependent(type = ConfigMapInstallValuesResource.class),
+        @Dependent(name = ConfigMapInstallValuesResource.COMPONENT, type = ConfigMapInstallValuesResource.class),
         @Dependent(name = ServiceAccountResource.COMPONENT, type = ServiceAccountResource.class),
         @Dependent(name = ClusterRoleResourceCluster.COMPONENT, type = ClusterRoleResourceCluster.class),
         @Dependent(name = ClusterRoleBindingResourceCluster.COMPONENT, type = ClusterRoleBindingResourceCluster.class),
@@ -21,7 +22,7 @@ import java.time.Duration;
                 type = JobEssentialBundleCopyResource.class,
                 readyPostcondition = JobReadyCondition.class),
         @Dependent(name = JobEssentialBundleDeployResource.COMPONENT,
-                dependsOn = {JobEssentialBundleCopyResource.COMPONENT},
+                dependsOn = {SecretResource.COMPONENT, ServiceAccountResource.COMPONENT, JobEssentialBundleCopyResource.COMPONENT},
                 type = JobEssentialBundleDeployResource.class,
                 readyPostcondition = JobReadyCondition.class),
         @Dependent(name = JobTapCopyResource.COMPONENT,
@@ -41,6 +42,13 @@ import java.time.Duration;
         @Dependent(name = SecretTapSensitiveImageRegistryResource.COMPONENT, type = SecretTapSensitiveImageRegistryResource.class),
         @Dependent(name = AppResource.COMPONENT, type = AppResource.class,
                 dependsOn = {
+                        SecretResource.COMPONENT,
+                        ConfigMapInstallValuesResource.COMPONENT,
+                        ServiceAccountResource.COMPONENT,
+                        SecretInstallRegistryDockerConfigResource.COMPONENT,
+                        SecretSyncAgeIdentityResource.COMPONENT,
+                        SecretSyncGitResource.COMPONENT,
+                        SecretTapSensitiveImageRegistryResource.COMPONENT,
                         JobEssentialBundleCopyResource.COMPONENT,
                         JobEssentialBundleDeployResource.COMPONENT,
                         JobPostgresCopyResource.COMPONENT,
@@ -57,7 +65,7 @@ public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResour
     @Override
     public UpdateControl<TapResource> reconcile(TapResource resource, Context<TapResource> context) throws Exception {
         log.debug("Reconciling: {}/{}", resource.getMetadata().getName(), resource.getSpec().getVersion());
-
+        AbstractWorkflowExecutor x;
         var ready = context
                 .managedDependentResourceContext()
                 .getWorkflowReconcileResult()
@@ -66,15 +74,16 @@ public class TapReconciler implements Reconciler<TapResource>, Cleaner<TapResour
         resource.getStatus().setReady(ready);
         log.debug("{}", resource.getStatus());
         if (resource.getStatus().getReady()) {
-            log.info("Ready !");
+            log.info("Resource {}/{} is ready", resource.getMetadata().getName(), resource.getSpec().getVersion());
             return UpdateControl.noUpdate();
         }
         return UpdateControl.updateStatus(resource).rescheduleAfter(Duration.ofSeconds(10));
+
     }
 
     @Override
     public DeleteControl cleanup(TapResource resource, Context<TapResource> context) {
-        log.debug("Clean up: {}", resource.getMetadata().getName());
+        log.debug("Clean up TapResource {}", resource.getMetadata().getName());
         return DeleteControl.defaultDelete();
     }
 }

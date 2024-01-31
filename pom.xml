@@ -1,64 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.1</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>org.moussaud.tanzu</groupId>
-	<artifactId>tap-operator</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>tap-operator</name>
-	<description>K8S operator for Tanzu Application platform</description>
-	<properties>
-		<java.version>21</java.version>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.1</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>org.moussaud.tanzu</groupId>
+    <artifactId>tap-operator</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>tap-operator</name>
+    <description>K8S operator for Tanzu Application platform</description>
+    <properties>
+        <java.version>21</java.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-		<!-- Springboot starter for SDK -->
-		<dependency>
-			<groupId>io.javaoperatorsdk</groupId>
-			<artifactId>operator-framework-spring-boot-starter</artifactId>
-			<version>5.4.1</version>
-		</dependency>
-		<dependency>
-			<groupId>io.javaoperatorsdk</groupId>
-			<artifactId>operator-framework-spring-boot-starter-test</artifactId>
-			<version>5.4.1</version>
-		</dependency>
 
-		<!-- To generate CRD 😎 -->
-		<dependency>
-			<groupId>io.fabric8</groupId>
-			<artifactId>crd-generator-apt</artifactId>
-			<version>6.9.2</version>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>io.javaoperatorsdk</groupId>
+            <artifactId>operator-framework</artifactId>
+            <version>4.7.1</version>
+        </dependency>
+
+        <!-- Springboot starter for SDK -->
+        <dependency>
+            <groupId>io.javaoperatorsdk</groupId>
+            <artifactId>operator-framework-spring-boot-starter</artifactId>
+            <version>5.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.javaoperatorsdk</groupId>
+            <artifactId>operator-framework-spring-boot-starter-test</artifactId>
+            <version>5.4.1</version>
+        </dependency>
+
+        <!-- To generate CRD 😎 -->
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>crd-generator-apt</artifactId>
+            <version>6.9.2</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -67,31 +74,29 @@
 
     </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
 
-			<plugin>
-				<groupId>io.fabric8</groupId>
-				<artifactId>java-generator-maven-plugin</artifactId>
-				<version>6.9.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<source>src/main/resources/kubernetes</source>
-				</configuration>
-			</plugin>
-
-
-		</plugins>
-	</build>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>java-generator-maven-plugin</artifactId>
+                <version>6.9.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>src/main/resources/kubernetes</source>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

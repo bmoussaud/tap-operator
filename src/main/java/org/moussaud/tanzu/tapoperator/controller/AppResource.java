@@ -25,6 +25,7 @@ import java.util.Map;
 
 import static java.util.List.of;
 
+
 public class AppResource extends BaseResource<App> {
     public static final String COMPONENT = "sync";
 
@@ -102,13 +103,7 @@ public class AppResource extends BaseResource<App> {
         return getComponent();
     }
 
-    @Override
-    protected void handleDelete(TapResource primary, App secondary, Context<TapResource> context) {
-        log.info("handleDelete {} {}", name(primary), resourceType());
-        super.handleDelete(primary, secondary, context);
-    }
 
-    @Override
     public boolean isDeletable() {
         log.trace("isDeletable  {} but True...to trigger the deletion of the App", super.isDeletable());
         return true;

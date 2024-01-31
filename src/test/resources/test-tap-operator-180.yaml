@@ -1,8 +1,8 @@
 apiVersion: org.moussaud.tanzu/v1
 kind: TapResource
 metadata:
-  name: tap
-  namespace: tap-operator
+  name: mytap
+  namespace: tanzu-sync
 spec:
   version: 1.8.0-build.65
   url: git@github.com:bmoussaud/tap-gitops.git

@@ -1,22 +1,22 @@
 package org.moussaud.tanzu.tapoperator.controller;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.javaoperatorsdk.operator.api.reconciler.Context;
 import io.javaoperatorsdk.operator.api.reconciler.ResourceIDMatcherDiscriminator;
 import io.javaoperatorsdk.operator.processing.dependent.kubernetes.CRUDKubernetesDependentResource;
+import io.javaoperatorsdk.operator.processing.dependent.kubernetes.KubernetesDependent;
 import io.javaoperatorsdk.operator.processing.event.ResourceID;
 import org.jetbrains.annotations.NotNull;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+@KubernetesDependent
 public abstract class BaseResource<R extends HasMetadata> extends CRUDKubernetesDependentResource<R, TapResource>
         implements TapOperatorManagedResource {
 
@@ -75,17 +75,25 @@ public abstract class BaseResource<R extends HasMetadata> extends CRUDKubernetes
         return secret;
     }
 
-    public ObjectMapper createYamlMapper() {
-        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory()
-                .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
-                .configure(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS, true)
-                .configure(YAMLGenerator.Feature.USE_NATIVE_OBJECT_ID, false)
-                .configure(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID, false)
-        );
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY).
-                enable(SerializationFeature.INDENT_OUTPUT);
-        return objectMapper;
-
+    @Override
+    protected R handleCreate(R desired, TapResource primary, Context<TapResource> context) {
+        log.info("handleCreate {} {} {}", name(primary), resourceType(), desired.getMetadata().getName());
+        return super.handleCreate(desired, primary, context);
     }
 
+    @Override
+    protected R handleUpdate(R actual, R desired, TapResource primary, Context<TapResource> context) {
+        log.info("Base handleUpdate {} {} {}", name(primary), resourceType(), desired.getMetadata().getName());
+        return super.handleUpdate(actual, desired, primary, context);
+    }
+
+    @Override
+    protected void handleDelete(TapResource primary, R secondary, Context<TapResource> context) {
+        if (secondary != null) {
+            log.info("handleDelete {} {} {}", name(primary), resourceType(), secondary.getMetadata().getName());
+        } else {
+            log.info("handleDelete {} {} ***", name(primary), resourceType());
+        }
+        super.handleDelete(primary, secondary, context);
+    }
 }

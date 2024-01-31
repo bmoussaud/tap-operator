@@ -1,8 +1,6 @@
 package org.moussaud.tanzu.tapoperator.controller;
 
-import io.fabric8.kubernetes.api.model.Container;
-import io.fabric8.kubernetes.api.model.PodSpecBuilder;
-import io.fabric8.kubernetes.api.model.PodTemplateSpecBuilder;
+import io.fabric8.kubernetes.api.model.*;
 import io.fabric8.kubernetes.api.model.batch.v1.Job;
 import io.fabric8.kubernetes.api.model.batch.v1.JobBuilder;
 import io.fabric8.kubernetes.api.model.batch.v1.JobSpecBuilder;
@@ -11,6 +9,8 @@ import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class BaseJobResource extends BaseResource<Job> {
@@ -30,6 +30,9 @@ public abstract class BaseJobResource extends BaseResource<Job> {
     @Override
     protected Job desired(TapResource primary, Context<TapResource> context) {
         log.debug("Desired {} {}", name(primary), resourceType());
+        List<Container> containers = getContainer(primary);
+        //log.warn("{} mode dev use sleep ", this.getClass());
+        containers = getDefaultContainer(primary);
         return new JobBuilder()
                 .withMetadata(createMeta(primary).build())
                 .withSpec(new JobSpecBuilder()
@@ -40,11 +43,25 @@ public abstract class BaseJobResource extends BaseResource<Job> {
                                 .withSpec(new PodSpecBuilder()
                                         .withRestartPolicy("Never")
                                         .withServiceAccount(new ServiceAccountResource().name(primary))
-                                        .withContainers(getContainer(primary))
+                                        .withContainers(containers)
                                         .build())
                                 .build())
                         .build())
                 .build();
+    }
+
+    protected List<Container> getDefaultContainer(TapResource primary) {
+        var image = "ghcr.io/bmoussaud/tap-operator@sha256:8b93667ca276be679d55482fc7138aa049be56ee44460d920bca6bb04b9b1352";
+        final Container copy_essentials = new ContainerBuilder()
+                .withName("dummy")
+                .withImage(image)
+                .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
+                .withEnv(Arrays.asList(
+                        new EnvVar("PACKAGE", "tanzu-cluster-essentials/cluster-essentials-bundle", null),
+                        new EnvVar("VERSION_TAP", primary.getSpec().getVersion(), null),
+                        new EnvVar("VERSION_ESS", Utils.getClusterEssentialsBundleVersion(primary), null)))
+                .build();
+        return Collections.singletonList(copy_essentials);
     }
 
     @Override
