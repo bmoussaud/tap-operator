@@ -8,11 +8,16 @@ import io.javaoperatorsdk.operator.api.reconciler.Context;
 import org.moussaud.tanzu.tapoperator.resource.TapResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@Component
 public abstract class BaseJobResource extends BaseResource<Job> {
 
     private static final Logger log = LoggerFactory.getLogger(BaseJobResource.class);
@@ -27,12 +32,15 @@ public abstract class BaseJobResource extends BaseResource<Job> {
 
     protected abstract List<Container> getContainer(TapResource primary);
 
+    @Value("${tap-operator.dev-mode false}")
+    private boolean devMode;
+
+    @Autowired
+    private Environment env;
+
     @Override
     protected Job desired(TapResource primary, Context<TapResource> context) {
         log.debug("Desired {} {}", name(primary), resourceType());
-        List<Container> containers = getContainer(primary);
-        //log.warn("{} mode dev use sleep ", this.getClass());
-        containers = getDefaultContainer(primary);
         return new JobBuilder()
                 .withMetadata(createMeta(primary).build())
                 .withSpec(new JobSpecBuilder()
@@ -43,11 +51,17 @@ public abstract class BaseJobResource extends BaseResource<Job> {
                                 .withSpec(new PodSpecBuilder()
                                         .withRestartPolicy("Never")
                                         .withServiceAccount(new ServiceAccountResource().name(primary))
-                                        .withContainers(containers)
+                                        .withContainers((isDevMode() ? getDefaultContainer(primary) : getContainer(primary)))
                                         .build())
                                 .build())
                         .build())
                 .build();
+    }
+
+    private boolean isDevMode() {
+        var v = Boolean.parseBoolean(System.getProperty("tap-operator.dev-mode", "false"));
+        log.trace("isdev mode {}", v);
+        return v;
     }
 
     protected List<Container> getDefaultContainer(TapResource primary) {

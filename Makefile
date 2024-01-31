@@ -44,7 +44,10 @@ test-operator: deploy-local-config deploy-spec
 	./mvnw spring-boot:run 
 
 run:
-	./mvnw spring-boot:run 
+	./mvnw spring-boot:run
+
+rundev:
+	./mvnw spring-boot:run  -Dspring-boot.run.jvmArguments="-Dtap-operator.dev-mode=true"
 
 test-update-operator: 
 	kubectl apply -f src/test/resources/test-tap-operator-171.yaml
