@@ -34,7 +34,7 @@ logging:
     # Include tracing ids in log entries.
     level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
   level:
-    org.moussaud: info
+    org.moussaud: debug
     org.springframework.web: ERROR
     io.javaoperatorsdk: info
     io.javaoperatorsdk.operator: info
