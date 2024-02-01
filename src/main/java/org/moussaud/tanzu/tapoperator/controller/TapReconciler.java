@@ -11,7 +11,7 @@ import java.time.Duration;
 @ControllerConfiguration(dependents = {
 
         @Dependent(name = SecretResource.COMPONENT, type = SecretResource.class),
-        @Dependent(name = ConfigMapInstallValuesResource.COMPONENT, type = ConfigMapInstallValuesResource.class),
+
         @Dependent(name = ServiceAccountResource.COMPONENT, type = ServiceAccountResource.class),
         @Dependent(name = ClusterRoleResourceCluster.COMPONENT, type = ClusterRoleResourceCluster.class),
         @Dependent(name = ClusterRoleBindingResourceCluster.COMPONENT, type = ClusterRoleBindingResourceCluster.class),
@@ -38,18 +38,13 @@ import java.time.Duration;
         @Dependent(name = SecretInstallRegistryDockerConfigResource.COMPONENT, type = SecretInstallRegistryDockerConfigResource.class),
         @Dependent(name = SecretSyncAgeIdentityResource.COMPONENT, type = SecretSyncAgeIdentityResource.class),
         @Dependent(name = SecretSyncGitResource.COMPONENT, type = SecretSyncGitResource.class),
-        @Dependent(name = SecretTapSensitiveImageRegistryResource.COMPONENT, type = SecretTapSensitiveImageRegistryResource.class),
+        @Dependent(name = ConfigMapInstallValuesResource.COMPONENT, type = ConfigMapInstallValuesResource.class, dependsOn = JobTapCopyResource.COMPONENT),
+        @Dependent(name = ConfigMapTapGuiResource.COMPONENT, type = ConfigMapTapGuiResource.class, dependsOn = JobTapCopyResource.COMPONENT),
+        @Dependent(name = SecretTapSensitiveImageRegistryResource.COMPONENT, type = SecretTapSensitiveImageRegistryResource.class, dependsOn = JobTapCopyResource.COMPONENT),
         @Dependent(name = AppResource.COMPONENT, type = AppResource.class,
                 dependsOn = {
                         SecretResource.COMPONENT,
-                        ConfigMapInstallValuesResource.COMPONENT,
                         ServiceAccountResource.COMPONENT,
-                        SecretInstallRegistryDockerConfigResource.COMPONENT,
-                        SecretSyncAgeIdentityResource.COMPONENT,
-                        SecretSyncGitResource.COMPONENT,
-                        SecretTapSensitiveImageRegistryResource.COMPONENT,
-                        JobEssentialBundleCopyResource.COMPONENT,
-                        JobEssentialBundleDeployResource.COMPONENT,
                         JobPostgresCopyResource.COMPONENT,
                         JobTapCopyResource.COMPONENT},
                 readyPostcondition = AppReadyCondition.class,

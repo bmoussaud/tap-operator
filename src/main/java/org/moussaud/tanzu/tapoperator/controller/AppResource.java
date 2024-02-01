@@ -74,10 +74,15 @@ public class AppResource extends BaseResource<App> {
         var valuesFromValues = new ValuesFrom();
         valuesFromValues.setPath("values");
 
-        var configMapRef = new ConfigMapRef();
-        configMapRef.setName(new ConfigMapInstallValuesResource().name(primary));
-        var valuesFromCM = new ValuesFrom();
-        valuesFromCM.setConfigMapRef(configMapRef);
+        var configMapRefToInstallValues = new ConfigMapRef();
+        configMapRefToInstallValues.setName(new ConfigMapInstallValuesResource().name(primary));
+        var valuesFromInstallValuesCM = new ValuesFrom();
+        valuesFromInstallValuesCM.setConfigMapRef(configMapRefToInstallValues);
+
+        var configMapRefToTapGui = new ConfigMapRef();
+        configMapRefToTapGui.setName(new ConfigMapTapGuiResource().name(primary));
+        var valuesFromInstallValuesTapGui = new ValuesFrom();
+        valuesFromInstallValuesTapGui.setConfigMapRef(configMapRefToTapGui);
 
         var secretRef = new io.k14s.kappctrl.v1alpha1.appspec.template.ytt.valuesfrom.SecretRef();
         secretRef.setName(new SecretTapSensitiveImageRegistryResource().name(primary));
@@ -86,7 +91,7 @@ public class AppResource extends BaseResource<App> {
 
         var ytt = new Ytt();
         ytt.setPaths(Collections.singletonList("config"));
-        ytt.setValuesFrom(of(valuesFromValues, valuesFromCM, valuesFromSecret));
+        ytt.setValuesFrom(of(valuesFromValues, valuesFromInstallValuesCM, valuesFromInstallValuesTapGui, valuesFromSecret));
         var template_ytt = new Template();
         template_ytt.setYtt(ytt);
 
