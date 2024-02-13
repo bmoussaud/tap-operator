@@ -1,6 +1,6 @@
 # TAP Operator
 
-Tanzu Application Platformm (TAP) operator manages the following task:
+Tanzu Application Platform (TAP) operator manages the following tasks:
 
 * Relocating Tanzu packages to turn your TAP installation independant.
     * copy _TAP Essential_ packages from tanzu registry to a local registry (Carvel Operators)
@@ -14,6 +14,9 @@ Tanzu Application Platformm (TAP) operator manages the following task:
     * the `sensitive-image-registry` secret containing the target registry with the credentials used to manage the
       deployment of TAP that will be used a the target registry for built project
     * the `tap-install-values` config map that includes the current version info.
+
+
+![tap-operator-tree](tap-operator-1.png)
 
 ## Installation
 
