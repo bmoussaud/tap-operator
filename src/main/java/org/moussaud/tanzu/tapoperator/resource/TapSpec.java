@@ -16,6 +16,9 @@ public class TapSpec {
 
     @Default("1.12.1")
     private String postgresVersion;
+
+    @Default("1.5.3")
+    private String rabbitMQVersion;
     //imgpkg tag list -i registry.tanzu.vmware.com/packages-for-vmware-tanzu-data-services/tds-packages
 
     @Default("tap-operator-registry-credentials")
@@ -56,6 +59,14 @@ public class TapSpec {
 
     public void setSubPath(String subPath) {
         this.subPath = subPath;
+    }
+
+    public String getRabbitMQVersion() {
+        return rabbitMQVersion;
+    }
+
+    public void setRabbitMQVersion(String rabbitMQVersion) {
+        this.rabbitMQVersion = rabbitMQVersion;
     }
 
     public String getClusterEssentialsBundleVersion() {

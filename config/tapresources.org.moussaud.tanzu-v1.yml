@@ -29,6 +29,9 @@ spec:
               postgresVersion:
                 default: 1.12.1
                 type: string
+              rabbitMQVersion:
+                default: 1.5.3
+                type: string
               secret:
                 default: tap-operator-registry-credentials
                 type: string

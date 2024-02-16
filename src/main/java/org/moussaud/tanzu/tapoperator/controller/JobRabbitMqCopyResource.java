@@ -9,16 +9,15 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class JobPostgresCopyResource extends BaseJobResource {
+public class JobRabbitMqCopyResource extends BaseJobResource {
 
-    public static final String COMPONENT = "postgres-copy";
+    public static final String COMPONENT = "rabbitmq-copy";
 
-    public JobPostgresCopyResource() {
+    public JobRabbitMqCopyResource() {
         super(Job.class, COMPONENT);
     }
 
-    // TODO imgpkg tag list -i registry.tanzu.vmware.com/tanzu-sql-postgres/vmware-sql-postgres-operator
-    // TODO: HELM  https://docs.vmware.com/en/VMware-SQL-with-Postgres-for-Kubernetes/2.2/vmware-postgres-k8s/GUID-install-operator.html
+    // TODO  imgpkg tag list -i registry.tanzu.vmware.com/p-rabbitmq-for-kubernetes/tanzu-rabbitmq-package-repo
     @Override
     protected List<Container> getContainer(TapResource primary) {
         var image = "ghcr.io/bmoussaud/tap-operator-copy-packages:v0.0.3";
@@ -28,9 +27,9 @@ public class JobPostgresCopyResource extends BaseJobResource {
                 .withSecurityContext(new SecurityContextBuilder().withRunAsUser(1000L).build())
                 .withEnv(Arrays.asList(
                         new EnvVar("PACKAGE",
-                                "packages-for-vmware-tanzu-data-services/tds-packages",
+                                "p-rabbitmq-for-kubernetes/tanzu-rabbitmq-package-repo",
                                 null),
-                        new EnvVar("VERSION", primary.getSpec().getPostgresVersion(),
+                        new EnvVar("VERSION", primary.getSpec().getRabbitMQVersion(),
                                 null)))
                 .withEnvFrom(new EnvFromSourceBuilder()
                         .withNewSecretRef(getSecretName(primary), false)

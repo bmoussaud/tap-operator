@@ -33,6 +33,11 @@ import java.time.Duration;
                 type = JobPostgresCopyResource.class,
                 readyPostcondition = JobReadyCondition.class),
 
+        @Dependent(name = JobRabbitMqCopyResource.COMPONENT,
+                dependsOn = {SecretResource.COMPONENT, ServiceAccountResource.COMPONENT},
+                type = JobRabbitMqCopyResource.class,
+                readyPostcondition = JobReadyCondition.class),
+
         @Dependent(name = SecretExportInstallRegistryResource.COMPONENT + "-se", type = SecretExportInstallRegistryResource.class, dependsOn = JobEssentialBundleDeployResource.COMPONENT),
         @Dependent(name = SecretExportAgeKeyResource.COMPONENT + "-se", type = SecretExportAgeKeyResource.class, dependsOn = JobEssentialBundleDeployResource.COMPONENT),
         @Dependent(name = SecretInstallRegistryDockerConfigResource.COMPONENT, type = SecretInstallRegistryDockerConfigResource.class),
